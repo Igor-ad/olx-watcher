@@ -1,2 +1,2 @@
 # olx-watcher
- Tracking product prices and price changes
+ Tracking OLX product prices and price changes

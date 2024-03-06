@@ -1,0 +1,34 @@
+{
+    "https:\/\/www.olx.ua\/d\/uk\/obyavlenie\/paverbank-baseus-bipow-digital-display-powerbank-20w-30000mah-IDSZeZo.html": {
+        "previous_price": "123",
+        "last_price": "456",
+        "previous_time": "2024-03-04 12:12:12",
+        "last_time": "2024-03-04 12:12:12",
+        "subscribers": [
+            "admin@mail.com"
+        ]
+    },
+    "https:\/\/www.olx.ua\/d\/uk\/obyavlenie\/powerbank-hoco-j94-75000-mah-22-5-w-poverbank-IDRmdeZ.html": {
+        "previous_price": "1349",
+        "last_price": "1349",
+        "previous_time": "2024-03-05 10:22:02",
+        "last_time": "2024-03-05 10:22:02",
+        "subscribers": [
+            "vlad@test.mail.com",
+            "ira@test.mail.com",
+            "igor@test.mail.com"
+        ]
+    },
+    "https:\/\/www.olx.ua\/d\/uk\/obyavlenie\/apple-iphone-11-pro-256-gb-dealniy-stan-chohol-paverbank-powerbank-IDUwqCH.html": {
+        "previous_price": "15999",
+        "last_price": "15999",
+        "previous_time": "2024-03-05 10:23:53",
+        "last_time": "2024-03-05 10:23:53",
+        "subscribers": [
+            "igor@test.mail.com",
+            "ira@test.mail.com",
+            "nika@test.mail.com",
+            "vlad@test.mail.com"
+        ]
+    }
+}

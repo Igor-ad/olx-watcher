@@ -1,0 +1,16 @@
+{
+    "name": "autodoctor/olx_watcher",
+    "description": "tracking product prices and price changes",
+    "license": "gpl",
+    "autoload": {
+        "psr-4": {
+            "Autodoctor\\OlxWatcher\\": "src/OlxWatcher"
+        }
+    },
+    "authors": [
+        {
+            "name": "autodoctor"
+        }
+    ],
+    "minimum-stability": "dev"
+}
