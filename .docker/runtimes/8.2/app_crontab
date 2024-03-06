@@ -1,0 +1,3 @@
+# Cron Tasks of OlxWatcher
+* /15 * * * root /usr/bin/php /var/www/html/src/OlxWatcher/Console/WatcherCommand.php
+* /15 * * * root sleep 30 && /usr/bin/php /var/www/html/src/OlxWatcher/Console/MailerCommand.php
