@@ -63,13 +63,16 @@ class SubscribeService
     public function subscribe(): int
     {
         if ($this->status) {
-            return $this->unsubscribe();
-        }
 
-        if (array_key_exists($this->url, $this->subscribe)) {
-            $this->addNewSubscriber();
+            return $this->unsubscribe();
+
         } else {
-            $this->subscribe[$this->url] = $this->subscribeResource($this->getPrice());
+
+            if (array_key_exists($this->url, $this->subscribe)) {
+                $this->addNewSubscriber();
+            } else {
+                $this->subscribe[$this->url] = $this->subscribeResource($this->getPrice());
+            }
         }
         CacheFileService::set(FilesEnum::SUBSCRIBE_FILE, $this->subscribe);
 
@@ -98,11 +101,13 @@ class SubscribeService
         ];
     }
 
-    public function unsubscribe(): int
+    protected function unsubscribe(): int
     {
-        foreach ($this->subscribe as $item) {
-            unset($item['subscribers'][$this->email]);
-
+        foreach ($this->subscribe as $url => $item) {
+            $item['subscribers'] = array_filter($item['subscribers'], function ($email) {
+                return $email != $this->email;
+            });
+            $this->subscribe[$url] = $item;
         }
         return 0;
     }
