@@ -7,7 +7,6 @@ namespace Autodoctor\OlxWatcher\Mail;
 use Autodoctor\OlxWatcher\CacheFileService;
 use Autodoctor\OlxWatcher\Enums\FilesEnum;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
-use Autodoctor\OlxWatcher\FileProcessor;
 
 class Mailer
 {
@@ -22,10 +21,18 @@ class Mailer
     public function __construct()
     {
         $this->config = parse_ini_file(
-            FileProcessor::readOnly(FilesEnum::CONFIG_FILE), true
+            FilesEnum::CONFIG_FILE, true
         );
         $this->subscribe = CacheFileService::get(FilesEnum::SUBSCRIBE_FILE);
         $this->updatedKeys = CacheFileService::get(FilesEnum::UPDATE_KEYS_FILE);
+    }
+
+    /**
+     * @throws WatcherException
+     */
+    public function __invoke(): int
+    {
+        return $this->sender();
     }
 
     public function sendMail(string $subscriber, string $url): bool

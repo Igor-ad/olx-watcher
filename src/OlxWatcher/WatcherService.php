@@ -5,15 +5,27 @@ declare(strict_types=1);
 namespace Autodoctor\OlxWatcher;
 
 use Autodoctor\OlxWatcher\Enums\FilesEnum;
+use Autodoctor\OlxWatcher\Exceptions\WatcherException;
 
 class WatcherService
 {
     protected array $subscribe = [];
     protected array $updatedKeys = [];
 
+    /**
+     * @throws WatcherException
+     */
     public function __construct()
     {
         $this->subscribe = CacheFileService::get(FilesEnum::SUBSCRIBE_FILE);
+    }
+
+    /**
+     * @throws WatcherException
+     */
+    public function __invoke(): int
+    {
+        return $this->watch();
     }
 
     public function getSubscribeUrlList(): array
@@ -21,6 +33,9 @@ class WatcherService
         return array_keys($this->subscribe);
     }
 
+    /**
+     * @throws WatcherException
+     */
     public function watch(): int
     {
         $this->parseNewPriceList();

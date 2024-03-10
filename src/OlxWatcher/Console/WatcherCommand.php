@@ -6,20 +6,11 @@ namespace Autodoctor\OlxWatcher\Console;
 
 use Autodoctor\OlxWatcher\WatcherService;
 
-class WatcherCommand
-{
-    public function __construct(
-        protected WatcherService $service,
-    )
-    {
-    }
+require __DIR__ . '/../../../vendor/autoload.php';
 
-    public function __invoke(): int
-    {
-        try {
-            $this->service->watch();
-        } catch (\Exception $e) {
-            echo 'Watcher error: ',  $e->getMessage(), "\n";
-        }
-    }
+try {
+    $watcher = new WatcherService();
+    $watcher();
+} catch (\Exception $e) {
+    echo 'Watcher error: ',  $e->getMessage(), "\n";
 }

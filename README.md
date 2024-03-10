@@ -14,13 +14,20 @@ cp ./.docker/runtimes/app_crontab /etc/cron.d/app_crontab
 ```
 
 Product price checking service: OlxWatcher\WatcherService
+
 Subscription Service: OlxWatcher\SubscribeService
+
 Parser script of products price: OlxWatcher\Parser
+
 Saving subscribers and  prices of products is implemented in json files: OlxWatcher\CacheFileService
+
 In the future it will be possible to use file cache or Redis: OlxWatcher\CacheRedisService
+
 Sample subscription file: subscribe_example.json
-The logging service has not yet been implemented.
+
 The mailing uses sendmail: OlxWatcher\Mail\Mailer
+
+The logging service has not yet been implemented.
 
 To subscribe, you need to make a GET request with two parameters:
 your email address and URL of the source OLX - advertisements for the sale of product.
