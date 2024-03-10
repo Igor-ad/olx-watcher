@@ -84,10 +84,12 @@ class SubscribeService
      */
     protected function addNewSubscriber(): void
     {
-//        if (in_array($this->email, $this->subscribe[$this->url]['subscribers'])) {
+        if (in_array($this->email, $this->subscribe[$this->url]['subscribers'])) {
+            echo 'You are already subscribed to this resource.' . "\n\r";
 //            throw new WatcherException('You are already subscribed to this resource.');
-//        }
-        $this->subscribe[$this->url]['subscribers'][] = $this->email;
+        } else {
+            $this->subscribe[$this->url]['subscribers'][] = $this->email;
+        }
     }
 
     protected function subscribeResource(string $price): array
