@@ -46,6 +46,9 @@ class WatcherService
         return 0;
     }
 
+    /**
+     * @throws WatcherException
+     */
     public function parseNewPriceList(): void
     {
         foreach ($this->getSubscribeUrlList() as $url) {

@@ -6,6 +6,7 @@ namespace Autodoctor\OlxWatcher\Mail;
 
 use Autodoctor\OlxWatcher\CacheFileService;
 use Autodoctor\OlxWatcher\Enums\FilesEnum;
+use Autodoctor\OlxWatcher\Exceptions\MailerException;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
 
 class Mailer
@@ -28,7 +29,7 @@ class Mailer
     }
 
     /**
-     * @throws WatcherException
+     * @throws MailerException
      */
     public function __invoke(): int
     {
@@ -46,6 +47,9 @@ class Mailer
         return mail($to, $subject, $message, implode("\r\n", $headers));
     }
 
+    /**
+     * @throws MailerException
+     */
     protected function createMailingList(): void
     {
         if (isset($this->updatedKeys)) {
@@ -63,18 +67,23 @@ class Mailer
             . $url . "\r\n" . 'New price: ' . $this->subscribe[$url]['last_price'];
     }
 
+    /**
+     * @throws MailerException
+     */
     public function checkSender(string $subscriber, string $url): int
     {
         if (!$this->sendMail($subscriber, $url)) {
             $this->isSend = false;
 
-            echo 'Mail not end';
+            throw new MailerException(sprintf(
+                'The email is not sent to the recipient: %s', $subscriber
+            ));
         }
         return 0;
     }
 
     /**
-     * @throws WatcherException
+     * @throws MailerException
      */
     public function sender(): int
     {
@@ -82,6 +91,6 @@ class Mailer
         if ($this->isSend) {
             return 0;
         }
-        throw new WatcherException('Error send mail');
+        throw new MailerException('Error sending email');
     }
 }
