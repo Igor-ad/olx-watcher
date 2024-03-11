@@ -63,12 +63,12 @@ class Mailer
             . $url . "\r\n" . 'New price: ' . $this->subscribe[$url]['last_price'];
     }
 
-    public function checkSender(string $subscriber, string $url): int|string
+    public function checkSender(string $subscriber, string $url): int
     {
         if (!$this->sendMail($subscriber, $url)) {
             $this->isSend = false;
 
-            return print('Mail not end');
+            echo 'Mail not end';
         }
         return 0;
     }

@@ -16,19 +16,22 @@ class Parser
     const CURRENCY_STRING = 'грн';
     const ERROR = 'Хьюстон, в нас проблема.';
     const TIME_OUT = 15;
-    const CONNECTTIMEOUT = 20;
+    const CONNECT_TIMEOUT = 20;
 
     protected string $targetUrl;
     protected string $target = '';
     protected string $title = '';
     protected string $price = '';
 
+    /**
+     * @throws WatcherException
+     */
     public function parse(): void
     {
         $this->target = $this->getUri($this->targetUrl);
         $this->checkUrl($this->target);
-        $this->parseTitle();
-        $this->parsePrice();
+        $this->title = $this->parseTitle();
+        $this->price = $this->parsePrice();
     }
 
     public function getTargetUrl(): string
@@ -56,6 +59,9 @@ class Parser
         return $this->title;
     }
 
+    /**
+     * @throws WatcherException
+     */
     public function checkUrl(string $target): bool
     {
         if (stripos($target, self::STRING_END) === false) {
@@ -74,19 +80,19 @@ class Parser
         );
     }
 
-    public function parsePrice(): void
+    public function parsePrice(): string
     {
         $tempPrice = trim($this->cutter(
             input: $this->title,
             start: self::CURRENCY_START,
             end: self::CURRENCY_STRING,
         ));
-        $this->price = str_replace(' ', '', $tempPrice);
+        return str_replace(' ', '', $tempPrice);
     }
 
-    public function parseTitle(): void
+    public function parseTitle(): string
     {
-        $this->title = $this->cutter(
+        return $this->cutter(
             input: $this->target,
             start: self::STRING_START,
             end: self::STRING_END,
