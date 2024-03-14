@@ -34,11 +34,6 @@ class Parser
         $this->price = $this->parsePrice();
     }
 
-    public function getTargetUrl(): string
-    {
-        return $this->targetUrl;
-    }
-
     public function setTargetUrl(string $targetUrl): void
     {
         $this->targetUrl = $targetUrl;
@@ -47,16 +42,6 @@ class Parser
     public function getPrice(): string
     {
         return $this->price;
-    }
-
-    public function getTarget(): string
-    {
-        return $this->target;
-    }
-
-    public function getTitle(): string
-    {
-        return $this->title;
     }
 
     /**

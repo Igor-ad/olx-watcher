@@ -19,7 +19,7 @@ class FileProcessor
         if ($data) {
             return $data;
         }
-        throw new WatcherException(sprintf('file %s has not data', $fileName));
+        throw new WatcherException(sprintf('There is no data in the %s file.', $fileName));
     }
 
     /**
@@ -34,7 +34,7 @@ class FileProcessor
             fclose($fp);
             return $data;
         }
-        throw new WatcherException(sprintf('failed to acquire lock on file %s', $fileName));
+            throw new WatcherException(sprintf('Failed to obtain lock on file %s', $fileName));
     }
 
     /**
@@ -45,7 +45,7 @@ class FileProcessor
         if (file_exists($fileName)) {
             return self::read($fileName, $accessLevel);
         }
-        throw new WatcherException(sprintf('file %s not found', $fileName));
+        throw new WatcherException(sprintf('%s file not found', $fileName));
     }
 
     /**
@@ -70,13 +70,13 @@ class FileProcessor
         if (flock($fp, LOCK_EX | LOCK_NB)) {
             $data = fwrite($fp, $data);
             if (!$data) {
-                throw new WatcherException(sprintf('file %s does not writable', $fileName));
+                throw new WatcherException(sprintf('The file %s is not writable.', $fileName));
             }
             flock($fp, LOCK_UN);
             fclose($fp);
             return $data;
         }
-        throw new WatcherException(sprintf('Does not lock file %s!', $fileName));
+        throw new WatcherException(sprintf('The %s file is not blocked.', $fileName));
     }
 
     /**

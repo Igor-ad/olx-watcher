@@ -6,46 +6,43 @@ namespace Autodoctor\OlxWatcher;
 
 use Autodoctor\OlxWatcher\Exceptions\ValidateException;
 use Autodoctor\OlxWatcher\Enums\FilesEnum;
+use Autodoctor\OlxWatcher\Exceptions\WatcherException;
+use Autodoctor\OlxWatcher\Validator\ValidateService;
 
 class SubscribeService
 {
-    protected array $subscribe = [];
+    protected array $subscribe;
     protected string $email;
     protected string $url;
     protected bool $status = false;
 
+    const RULES = [
+        'email' => [
+            'filter' => FILTER_VALIDATE_EMAIL,
+        ],
+        'url' => [
+            'filter' => FILTER_VALIDATE_URL,
+        ],
+        'status' => [
+            'filter' => FILTER_DEFAULT,
+        ],
+    ];
+
+    /**
+     * @throws ValidateException|WatcherException
+     */
     public function __construct()
     {
-        $this->email = $this->validateEmail();
-        $this->url = $this->validateUrl();
+        $validData = ValidateService::validated(self::RULES);
+        $this->email = $validData['email'];
+        $this->url = $validData['url'];
         $this->subscribe = CacheFileService::get(FilesEnum::SUBSCRIBE_FILE);
-        $this->setStatus();
+        $this->status = $validData['status'] === 'unsubscribe';
     }
 
     /**
-     * @throws ValidateException
+     * @throws WatcherException
      */
-    public function validateEmail(): string
-    {
-        $email = isset($_GET['email']) ? filter_var($_GET['email'], FILTER_VALIDATE_EMAIL) : '';
-        if ($email) {
-            return $email;
-        }
-        throw new ValidateException('The email address entered is invalid.');
-    }
-
-    /**
-     * @throws ValidateException
-     */
-    public function validateUrl(): string
-    {
-        $url = isset($_GET['url']) ? filter_var($_GET['url'], FILTER_VALIDATE_URL) : '';
-        if ($url) {
-            return $url;
-        }
-        throw new ValidateException('The entered Internet resource address is invalid.');
-    }
-
     protected function getPrice(): string
     {
         $parser = ParserFactory::getParser();
@@ -55,11 +52,9 @@ class SubscribeService
         return $parser->getPrice();
     }
 
-    public function setStatus(): void
-    {
-        $this->status = isset($_GET['status']) && $_GET['status'] === 'unsubscribe';
-    }
-
+    /**
+     * @throws WatcherException
+     */
     public function subscribe(): int
     {
         if ($this->status) {
@@ -80,6 +75,7 @@ class SubscribeService
     }
 
     /**
+     * [Info or Error]
      * to check the subscriber uncomment the following lines
      */
     protected function addNewSubscriber(): void
@@ -103,13 +99,18 @@ class SubscribeService
         ];
     }
 
+    /**
+     * @throws WatcherException
+     */
     protected function unsubscribe(): int
     {
         foreach ($this->subscribe as $url => $item) {
-            $item['subscribers'] = array_filter($item['subscribers'], function ($email) {
-                return $email != $this->email;
-            });
+            $item['subscribers'] = array_filter(
+                $item['subscribers'],
+                fn($email) => $email != $this->email
+            );
             $this->subscribe[$url] = $item;
+            CacheFileService::set(FilesEnum::SUBSCRIBE_FILE, $this->subscribe);
         }
         return 0;
     }
