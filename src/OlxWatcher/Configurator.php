@@ -19,5 +19,6 @@ class Configurator
         if ($config === false) {
             throw new WatcherException('Error reading configuration.');
         }
+        return $config;
     }
 }

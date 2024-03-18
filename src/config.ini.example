@@ -6,13 +6,19 @@ labels[app] = "olx-watcher-worker"
 labels[description] = "Tracking prices for OLX products and their changes"
 labels[env] = "dev"
 
-[config.log]
+[log]
 level = "info"
 
-[config.cache]
-type = "file"
+[cache]
+type = "redis"
 
-[config.mail]
+[redis]
+host = "redis"
+port = 6379
+user = ""
+password = null
+
+[mail]
 subject = "The price of your tracked product has changed."
 message = "Please, visit to web page"
 sender = "admin-olx-watcher@localhost.com"

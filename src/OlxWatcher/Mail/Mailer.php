@@ -33,15 +33,19 @@ class Mailer
      */
     public function __invoke(): int
     {
+        if ($this->updatedKeys === []) {
+            echo 'There is no mailing list.' . PHP_EOL;
+            return 0;
+        }
         return $this->sender();
     }
 
     public function sendMail(string $subscriber, string $url): bool
     {
         $to = $subscriber;
-        $subject = $this->config['config.mail']['subject'];
+        $subject = $this->config['mail']['subject'];
         $message = $this->messageFormatter($url);
-        $headers[] = 'From: ' . $this->config['config.mail']['sender'];
+        $headers[] = 'From: ' . $this->config['mail']['sender'];
         $headers[] = 'X-Mailer: PHP/' . phpversion();
 
         return mail($to, $subject, $message, implode("\r\n", $headers));
@@ -63,8 +67,8 @@ class Mailer
 
     protected function messageFormatter(string $url): string
     {
-        return $this->config['config.mail']['message']
-            . $url . "\r\n" . 'New price: ' . $this->subscribe[$url]['last_price'];
+        return $this->config['mail']['message'] . $url . "\r\n"
+            . 'New price: ' . $this->subscribe[$url]['last_price'];
     }
 
     /**
@@ -91,6 +95,6 @@ class Mailer
         if ($this->isSend) {
             return 0;
         }
-        throw new MailerException('Error sending email');
+        throw new MailerException('Error sending email.');
     }
 }
