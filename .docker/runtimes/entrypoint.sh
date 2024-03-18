@@ -124,6 +124,10 @@ if [ -f /var/www/html/conf/worker/supervisor.conf ]; then
     info "Custom supervisor config found"
     cp /var/www/html/conf/worker/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 fi
+chmod 0755 /var/www/html/src/OlxWatcher/Console/WatcherCommand.php
+chmod 0755 /var/www/html/src/OlxWatcher/Console/MailerCommand.php
+chmod 0777 /var/www/html/src/subscribe.json
+cron
 ## Start Supervisord
 supervisord -c /etc/supervisor/supervisord.conf
 

@@ -8,9 +8,6 @@ PHP v8.2^, composer, git
 Init cmd:
 git clone 
 composer install
-chmod 777 ./src/subscribe.json
-chmod 777 ./src/updated_keys.json
-cp ./.docker/runtimes/app_crontab /etc/cron.d/app_crontab
 ```
 
 Product price checking service: OlxWatcher\WatcherService

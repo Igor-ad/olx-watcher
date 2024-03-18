@@ -11,8 +11,8 @@ ARG GROUP_NAME=www-data
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     git curl libfreetype6-dev libjpeg62-turbo-dev libzip-dev \
-    libpng-dev libonig-dev libxml2-dev libpq-dev \
-    openssh-server zip unzip supervisor sqlite3 nano cron sendmail
+    libpng-dev libonig-dev libxml2-dev libpq-dev openssh-server \
+    zip unzip supervisor sqlite3 nano cron mutt sendmail
 
 # Install nginx
 RUN apt-get update && apt-get install -y nginx
@@ -81,7 +81,7 @@ RUN mkdir -p /var/log/supervisor
 RUN mkdir -p /var/log/nginx
 RUN mkdir -p /var/cache/nginx
 
-RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/www/* && \
+RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/www && \
   chown -R ${USER_NAME}:${GROUP_NAME} /var/log/ && \
   chown -R ${USER_NAME}:${GROUP_NAME} /etc/supervisor/conf.d/ && \
   chown -R ${USER_NAME}:${GROUP_NAME} $PHP_INI_DIR/conf.d/ && \
@@ -94,8 +94,6 @@ RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/www/* && \
   chown -R $USER_NAME:$USER_NAME /etc/nginx/conf.d/ && \
   chown -R ${USER_NAME}:${GROUP_NAME} /tmp
 
-
-CMD ["cron", "-f", "-d", "8"]
 EXPOSE 8080
 ENTRYPOINT ["entrypoint.sh"]
 
