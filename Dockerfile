@@ -42,7 +42,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Set working directory
 WORKDIR $WORKDIR
 
-RUN rm -Rf /var/www/* && \
+RUN rm -Rf /var/www && \
 mkdir -p /var/www/html
 
 ADD .docker/runtimes/index.php $WORKDIR/index.php

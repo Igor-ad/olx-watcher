@@ -7,6 +7,8 @@ PHP v8.2^, composer, git
 ```
 Init cmd:
 git clone 
+cd /project/olx-watcher
+cp ./config.ini.examlpe ./config.ini
 composer install
 ```
 

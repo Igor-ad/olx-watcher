@@ -21,6 +21,26 @@ services:
       - '${FORWARD_MAILHOG_DASHBOARD_PORT:-8025}:8025'
     networks:
       - olx-watcher
+    depends_on:
+      - redis
+  redis:
+    image: 'redis:alpine'
+    ports:
+      - '${FORWARD_REDIS_PORT:-6379}:6379'
+    volumes:
+      - 'olx-watcher-redis:/data'
+    networks:
+      - olx-watcher
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - ping
+      retries: 3
+      timeout: 5s
 networks:
   olx-watcher:
     driver: bridge
+volumes:
+  olx-watcher-redis:
+    driver: local

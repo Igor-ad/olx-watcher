@@ -23,6 +23,10 @@ class WatcherService
      */
     public function __invoke(): int
     {
+        if ($this->subscribe === []) {
+            echo 'No subscriptions yet.' . PHP_EOL;
+            return 0;
+        }
         return $this->watch();
     }
 
