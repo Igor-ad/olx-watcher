@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher;
 
-use Autodoctor\OlxWatcher\Enums\FilesEnum;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
 
 class WatcherService
@@ -12,12 +11,11 @@ class WatcherService
     protected array $subscribe = [];
     protected array $updatedKeys = [];
 
-    /**
-     * @throws WatcherException
-     */
-    public function __construct()
+    public function __construct(
+        protected CacheInterface $cache,
+    )
     {
-        $this->subscribe = CacheFileService::get(FilesEnum::SUBSCRIBE_FILE);
+        $this->subscribe = $this->cache->get('subscribe');
     }
 
     /**
@@ -40,8 +38,8 @@ class WatcherService
     {
         $this->parseNewPriceList();
 
-        CacheFileService::set(FilesEnum::SUBSCRIBE_FILE, $this->subscribe);
-        CacheFileService::set(FilesEnum::UPDATE_KEYS_FILE, $this->updatedKeys);
+        $this->cache->set('subscribe', $this->subscribe);
+        $this->cache->set('updated', $this->updatedKeys);
 
         return 0;
     }

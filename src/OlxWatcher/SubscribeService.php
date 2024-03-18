@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Autodoctor\OlxWatcher;
 
 use Autodoctor\OlxWatcher\Exceptions\ValidateException;
-use Autodoctor\OlxWatcher\Enums\FilesEnum;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
 use Autodoctor\OlxWatcher\Validator\ValidateService;
 
 class SubscribeService
 {
-    protected array $subscribe;
+    protected array $subscribe = [];
     protected string $email;
     protected string $url;
     protected bool $status = false;
@@ -31,12 +30,14 @@ class SubscribeService
     /**
      * @throws ValidateException|WatcherException
      */
-    public function __construct()
+    public function __construct(
+        protected CacheInterface $cache,
+    )
     {
         $validData = ValidateService::validated(self::RULES);
         $this->email = $validData['email'];
         $this->url = $validData['url'];
-        $this->subscribe = CacheFileService::get(FilesEnum::SUBSCRIBE_FILE);
+        $this->subscribe = $this->cache->get('subscribe');
         $this->status = $validData['status'] === 'unsubscribe';
     }
 
@@ -69,20 +70,15 @@ class SubscribeService
                 $this->subscribe[$this->url] = $this->subscribeResource($this->getPrice());
             }
         }
-        CacheFileService::set(FilesEnum::SUBSCRIBE_FILE, $this->subscribe);
+        $this->cache->set('subscribe', $this->subscribe);
 
         return 0;
     }
 
-    /**
-     * [Info or Error]
-     * to check the subscriber uncomment the following lines
-     */
     protected function addNewSubscriber(): void
     {
         if (in_array($this->email, $this->subscribe[$this->url]['subscribers'])) {
             echo 'You are already subscribed to this resource.' . "\n\r";
-//            throw new WatcherException('You are already subscribed to this resource.');
         } else {
             $this->subscribe[$this->url]['subscribers'][] = $this->email;
         }
@@ -99,9 +95,6 @@ class SubscribeService
         ];
     }
 
-    /**
-     * @throws WatcherException
-     */
     protected function unsubscribe(): int
     {
         foreach ($this->subscribe as $url => $item) {
@@ -110,7 +103,7 @@ class SubscribeService
                 fn($email) => $email != $this->email
             );
             $this->subscribe[$url] = $item;
-            CacheFileService::set(FilesEnum::SUBSCRIBE_FILE, $this->subscribe);
+            $this->cache->set('subscribe', $this->subscribe);
         }
         return 0;
     }

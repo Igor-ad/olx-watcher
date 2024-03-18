@@ -6,7 +6,7 @@ namespace Autodoctor\OlxWatcher;
 
 interface CacheInterface
 {
-    public static function get(string $key): mixed;
+    public function get(string $key): mixed;
 
-    public static function set(string $key, mixed $data): void;
+    public function set(string $key, mixed $data): void;
 }

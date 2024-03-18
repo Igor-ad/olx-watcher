@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Mail;
 
-use Autodoctor\OlxWatcher\CacheFileService;
-use Autodoctor\OlxWatcher\Enums\FilesEnum;
+use Autodoctor\OlxWatcher\CacheInterface;
+use Autodoctor\OlxWatcher\Configurator;
 use Autodoctor\OlxWatcher\Exceptions\MailerException;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
 
@@ -19,13 +19,13 @@ class Mailer
     /**
      * @throws WatcherException
      */
-    public function __construct()
+    public function __construct(
+        protected CacheInterface $cache
+    )
     {
-        $this->config = parse_ini_file(
-            FilesEnum::CONFIG_FILE, true
-        );
-        $this->subscribe = CacheFileService::get(FilesEnum::SUBSCRIBE_FILE);
-        $this->updatedKeys = CacheFileService::get(FilesEnum::UPDATE_KEYS_FILE);
+        $this->config = Configurator::config();
+        $this->subscribe = $cache->get('subscribe');
+        $this->updatedKeys = $cache->get('updated');
     }
 
     /**

@@ -6,12 +6,12 @@ namespace Autodoctor\OlxWatcher;
 
 class CacheRedisService implements CacheInterface
 {
-    public static function get(string $key): mixed
+    public function get(string $key): mixed
     {
         // TODO: Implement get() method.
     }
 
-    public static function set(string $key, mixed $data): void
+    public function set(string $key, mixed $data): void
     {
         // TODO: Implement set() method.
     }

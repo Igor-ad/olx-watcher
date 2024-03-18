@@ -28,8 +28,7 @@ class ValidateService
         }
 
         throw new ValidateException(sprintf(
-                'Invalid entered data: "%s"', implode(
-                    ', ', array_keys($this->errors($data)))
+                'Invalid entered data: "%s"', $this->toString($this->errors($data))
             )
         );
     }
@@ -37,5 +36,10 @@ class ValidateService
     protected function errors(array $data): array
     {
         return array_filter($data, fn($value) => $value === false);
+    }
+
+    protected function toString(array $errors): string
+    {
+        return implode(', ', array_keys($errors));
     }
 }
