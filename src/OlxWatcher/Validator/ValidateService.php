@@ -22,20 +22,20 @@ class ValidateService
     public function validate(array $rules): array
     {
         $data = filter_var_array($_REQUEST, $rules);
+        $errors = $this->errors($data);
 
-        if ($data && !in_array(false, $data, true)) {
-            return $data;
+        if ($data === false || $errors) {
+            throw new ValidateException(sprintf(
+                    'Invalid entered data: "%s"', $this->toString($errors)
+                )
+            );
         }
-
-        throw new ValidateException(sprintf(
-                'Invalid entered data: "%s"', $this->toString($this->errors($data))
-            )
-        );
+        return $data;
     }
 
     protected function errors(array $data): array
     {
-        return array_filter($data, fn($value) => $value === false);
+        return array_filter($data, fn($value) => ($value === false) || ($value === null));
     }
 
     protected function toString(array $errors): string

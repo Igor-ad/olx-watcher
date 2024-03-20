@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Autodoctor\OlxWatcher;
+namespace Autodoctor\OlxWatcher\Services;
 
+use Autodoctor\OlxWatcher\Database\CacheInterface;
 use Autodoctor\OlxWatcher\Exceptions\ValidateException;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
+use Autodoctor\OlxWatcher\ParserFactory;
 use Autodoctor\OlxWatcher\Validator\ValidateService;
 
 class SubscribeService
@@ -21,9 +23,7 @@ class SubscribeService
         ],
         'url' => [
             'filter' => FILTER_VALIDATE_URL,
-        ],
-        'status' => [
-            'filter' => FILTER_DEFAULT,
+            'flags' => FILTER_FLAG_PATH_REQUIRED,
         ],
     ];
 

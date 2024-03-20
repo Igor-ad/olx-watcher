@@ -1,7 +1,7 @@
 <?php
 
-use Autodoctor\OlxWatcher\CacheFactory;
-use Autodoctor\OlxWatcher\SubscribeService;
+use Autodoctor\OlxWatcher\Database\CacheFactory;
+use Autodoctor\OlxWatcher\Services\SubscribeService;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -15,7 +15,7 @@ try {
         echo 'Something went wrong';
     }
 } catch (Exception $e) {
-    echo 'Subscribe error: ', $e->getMessage(), "\n";
+    echo 'Subscribe error: ' . $e->getMessage() . PHP_EOL;
 }
 
 

@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Autodoctor\OlxWatcher;
+namespace Autodoctor\OlxWatcher\Services;
 
+use Autodoctor\OlxWatcher\Database\CacheInterface;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
+use Autodoctor\OlxWatcher\ParserFactory;
 
 class WatcherService
 {

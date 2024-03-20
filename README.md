@@ -2,7 +2,8 @@
  Tracking OLX product prices and price changes
 
 Requirements:
-PHP v8.2^, composer, git
+PHP ^8.2, composer, git
+composer/autoload psr-4
 
 ```
 Init cmd:

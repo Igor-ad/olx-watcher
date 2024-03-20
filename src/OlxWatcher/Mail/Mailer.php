@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Mail;
 
-use Autodoctor\OlxWatcher\CacheInterface;
 use Autodoctor\OlxWatcher\Configurator;
+use Autodoctor\OlxWatcher\Database\CacheInterface;
 use Autodoctor\OlxWatcher\Exceptions\MailerException;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
 

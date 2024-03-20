@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Autodoctor\OlxWatcher;
+namespace Autodoctor\OlxWatcher\Database;
 
+use Autodoctor\OlxWatcher\Configurator;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
 
 class CacheRedisService implements CacheInterface

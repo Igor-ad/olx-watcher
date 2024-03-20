@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Autodoctor\OlxWatcher;
+namespace Autodoctor\OlxWatcher\Database;
 
 interface CacheInterface
 {

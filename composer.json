@@ -4,7 +4,7 @@
     "license": "gpl",
     "autoload": {
         "psr-4": {
-            "Autodoctor\\OlxWatcher\\": "src/OlxWatcher"
+            "Autodoctor\\": "src/"
         }
     },
     "authors": [

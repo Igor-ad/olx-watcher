@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Autodoctor\OlxWatcher;
+namespace Autodoctor\OlxWatcher\Database;
 
 use Autodoctor\OlxWatcher\Enums\FilesEnum;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
+use Autodoctor\OlxWatcher\FileProcessor;
 
 class CacheFileService implements CacheInterface
 {

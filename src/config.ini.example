@@ -11,6 +11,7 @@ level = "info"
 
 [cache]
 type = "redis"
+;type = "file"
 
 [redis]
 host = "redis"
@@ -21,4 +22,4 @@ password = null
 [mail]
 subject = "The price of your tracked product has changed."
 message = "Please, visit to web page"
-sender = "admin-olx-watcher@localhost.com"
+sender = "admin@olx-watcher.com"
