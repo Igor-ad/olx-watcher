@@ -14,15 +14,6 @@ services:
       - '.:/var/www/html'
     networks:
       - olx-watcher
-  mailhog:
-    image: 'mailhog/mailhog:latest'
-    ports:
-      - '${FORWARD_MAILHOG_PORT:-1025}:1025'
-      - '${FORWARD_MAILHOG_DASHBOARD_PORT:-8025}:8025'
-    networks:
-      - olx-watcher
-    depends_on:
-      - redis
   redis:
     image: 'redis:alpine'
     ports:
@@ -38,6 +29,14 @@ services:
         - ping
       retries: 3
       timeout: 5s
+  mail:
+    image: boky/postfix
+    environment:
+      - ALLOWED_SENDER_DOMAINS=olx-watcher.com
+      - POSTFIX_always_add_missing_headers=yes
+      - HOSTNAME=olx-watcher.com
+    networks:
+      - olx-watcher
 networks:
   olx-watcher:
     driver: bridge

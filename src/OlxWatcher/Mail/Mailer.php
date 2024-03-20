@@ -11,6 +11,8 @@ use Autodoctor\OlxWatcher\Exceptions\WatcherException;
 
 class Mailer
 {
+    use Formatter;
+
     protected array $config = [];
     protected array $subscribe = [];
     protected array $updatedKeys = [];
@@ -44,11 +46,11 @@ class Mailer
     {
         $to = $subscriber;
         $subject = $this->config['mail']['subject'];
-        $message = $this->messageFormatter($url);
+        $message = $this->priceUpdateMessage($url);
         $headers[] = 'From: ' . $this->config['mail']['sender'];
         $headers[] = 'X-Mailer: PHP/' . phpversion();
 
-        return mail($to, $subject, $message, implode("\r\n", $headers));
+        return mail($to, $subject, $message, implode(self::RN, $headers));
     }
 
     /**
@@ -63,12 +65,6 @@ class Mailer
                 }
             }
         }
-    }
-
-    protected function messageFormatter(string $url): string
-    {
-        return $this->config['mail']['message'] . $url . "\r\n"
-            . 'New price: ' . $this->subscribe[$url]['last_price'];
     }
 
     /**
@@ -93,6 +89,7 @@ class Mailer
     {
         $this->createMailingList();
         if ($this->isSend) {
+            echo 'The email may have been sent.' . PHP_EOL;
             return 0;
         }
         throw new MailerException('Error sending email.');

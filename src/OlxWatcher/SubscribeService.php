@@ -105,6 +105,7 @@ class SubscribeService
             $this->subscribe[$url] = $item;
             $this->cache->set('subscribe', $this->subscribe);
         }
+        echo 'You have unsubscribed from this resource.' . PHP_EOL;
         return 0;
     }
 }

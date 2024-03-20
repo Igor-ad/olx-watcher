@@ -17,12 +17,17 @@ class CacheFactory
 
         return match ($cacheDriver) {
             'redis' => new CacheRedisService(new \Redis()),
-            'file' => new CacheFileService(),
+            default => new CacheFileService(),
         };
     }
 
+    /**
+     * @throws WatcherException
+     */
     private static function typeCacheDriver(): string
     {
-        return Configurator::config()['cache']['type'] ?? 'file';
+        return empty(Configurator::config()['cache']['type'])
+            ? 'file'
+            : Configurator::config()['cache']['type'];
     }
 }

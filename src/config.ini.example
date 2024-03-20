@@ -15,7 +15,7 @@ type = "redis"
 [redis]
 host = "redis"
 port = 6379
-user = ""
+user = "redis"
 password = null
 
 [mail]
