@@ -15,17 +15,7 @@ class SubscribeService
     protected array $subscribe = [];
     protected string $email;
     protected string $url;
-    protected bool $status = false;
-
-    const RULES = [
-        'email' => [
-            'filter' => FILTER_VALIDATE_EMAIL,
-        ],
-        'url' => [
-            'filter' => FILTER_VALIDATE_URL,
-            'flags' => FILTER_FLAG_PATH_REQUIRED,
-        ],
-    ];
+    protected string|bool $status;
 
     /**
      * @throws ValidateException|WatcherException
@@ -34,11 +24,28 @@ class SubscribeService
         protected CacheInterface $cache,
     )
     {
-        $validData = ValidateService::validated(self::RULES);
+        $validData = ValidateService::validated($this->rules());
         $this->email = $validData['email'];
         $this->url = $validData['url'];
+        $this->status = $validData['status'];
         $this->subscribe = $this->cache->get('subscribe');
-        $this->status = $validData['status'] === 'unsubscribe';
+    }
+
+    private function rules(): array
+    {
+        return [
+            'email' => [
+                'filter' => FILTER_VALIDATE_EMAIL,
+            ],
+            'url' => [
+                'filter' => FILTER_VALIDATE_URL,
+                'flags' => FILTER_FLAG_PATH_REQUIRED,
+            ],
+            'status' => [
+                'filter' => FILTER_CALLBACK,
+                'options' => fn($value) => $value === 'unsubscribe' ? true : '',
+            ],
+        ];
     }
 
     /**
@@ -58,7 +65,7 @@ class SubscribeService
      */
     public function subscribe(): int
     {
-        if ($this->status) {
+        if ($this->status === true) {
 
             return $this->unsubscribe();
 

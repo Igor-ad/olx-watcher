@@ -34,7 +34,7 @@ your email address and URL of the source OLX - advertisements for the sale of pr
 
 Example:
 ```
-http://example-olx-watcher/index.php?email=test@mail.com&url=https://www.olx.ua/powerbank.html
+http://example-olx-watcher/index.php?status=subscribe&email=test@mail.com&url=https://www.olx.ua/powerbank.html
 ```
 
 To unsubscribe from all subscriptions you must send a GET request:
