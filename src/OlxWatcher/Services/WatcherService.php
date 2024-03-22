@@ -7,9 +7,15 @@ namespace Autodoctor\OlxWatcher\Services;
 use Autodoctor\OlxWatcher\Database\CacheInterface;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
 use Autodoctor\OlxWatcher\ParserFactory;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
-class WatcherService
+class WatcherService implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
+    const NOTICE = 'No subscriptions yet.';
+
     protected array $subscribe = [];
     protected array $updatedKeys = [];
 
@@ -26,7 +32,9 @@ class WatcherService
     public function __invoke(): int
     {
         if ($this->subscribe === []) {
-            echo 'No subscriptions yet.' . PHP_EOL;
+            echo self::NOTICE . PHP_EOL; // insert into /var/log/cron.log
+            $this->logger->notice(self::NOTICE);
+
             return 0;
         }
         return $this->watch();

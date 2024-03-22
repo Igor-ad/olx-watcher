@@ -127,6 +127,7 @@ fi
 chmod 0755 /var/www/html/src/OlxWatcher/Console/WatcherCommand.php
 chmod 0755 /var/www/html/src/OlxWatcher/Console/MailerCommand.php
 chmod 0777 /var/www/html/src/subscribe.json
+chmod 0777 /var/www/html/src/olx_watcher.log
 cron
 ## Start Supervisord
 supervisord -c /etc/supervisor/supervisord.conf

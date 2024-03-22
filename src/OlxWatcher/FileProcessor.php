@@ -24,9 +24,9 @@ class FileProcessor
     /**
      * @throws WatcherException
      */
-    public static function putContent(string $fileName, mixed $data): int
+    public static function putContent(string $fileName, mixed $data, int $flag = 0): int
     {
-        $result = file_put_contents($fileName, $data);
+        $result = file_put_contents($fileName, $data, $flag);
 
         if ($result === false) {
             throw new WatcherException(sprintf('Error writing to file %s.', $fileName));

@@ -12,5 +12,8 @@
             "name": "autodoctor"
         }
     ],
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "require": {
+        "psr/log": "^3.0@dev"
+    }
 }

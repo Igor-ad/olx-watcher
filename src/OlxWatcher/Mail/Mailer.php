@@ -8,10 +8,14 @@ use Autodoctor\OlxWatcher\Configurator;
 use Autodoctor\OlxWatcher\Database\CacheInterface;
 use Autodoctor\OlxWatcher\Exceptions\MailerException;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
-class Mailer
+class Mailer implements LoggerAwareInterface
 {
-    use Formatter;
+    use Formatter, LoggerAwareTrait;
+
+    const NOTICE = 'There is no mailing list.';
 
     protected array $config = [];
     protected array $subscribe = [];
@@ -36,7 +40,9 @@ class Mailer
     public function __invoke(): int
     {
         if ($this->updatedKeys === []) {
-            echo 'There is no mailing list.' . PHP_EOL;
+            echo self::NOTICE . PHP_EOL;
+            $this->logger->notice(self::NOTICE);
+
             return 0;
         }
         return $this->sender();

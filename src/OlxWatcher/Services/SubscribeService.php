@@ -9,9 +9,16 @@ use Autodoctor\OlxWatcher\Exceptions\ValidateException;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
 use Autodoctor\OlxWatcher\ParserFactory;
 use Autodoctor\OlxWatcher\Validator\ValidateService;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
-class SubscribeService
+class SubscribeService implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
+    const NOTICE_SUBSCRIBED = 'You are already subscribed to this resource.';
+    const NOTICE_UNSUBSCRIBED = 'You have unsubscribed from this resource.';
+
     protected array $subscribe = [];
     protected string $email;
     protected string $url;
@@ -85,7 +92,8 @@ class SubscribeService
     protected function addNewSubscriber(): void
     {
         if (in_array($this->email, $this->subscribe[$this->url]['subscribers'])) {
-            echo 'You are already subscribed to this resource.' . "\n\r";
+            echo self::NOTICE_SUBSCRIBED . PHP_EOL; // insert into /var/log/cron.log
+            $this->logger->notice(self::NOTICE_SUBSCRIBED, [$this->email, $this->url]);
         } else {
             $this->subscribe[$this->url]['subscribers'][] = $this->email;
         }
@@ -112,7 +120,9 @@ class SubscribeService
             $this->subscribe[$url] = $item;
             $this->cache->set('subscribe', $this->subscribe);
         }
-        echo 'You have unsubscribed from this resource.' . PHP_EOL;
+        echo self::NOTICE_UNSUBSCRIBED . PHP_EOL; // insert into /var/log/cron.log
+        $this->logger->info(self::NOTICE_UNSUBSCRIBED, [$this->status, $this->email, $this->url]);
+
         return 0;
     }
 }
