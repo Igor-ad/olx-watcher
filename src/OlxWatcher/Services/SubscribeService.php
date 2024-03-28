@@ -26,7 +26,7 @@ class SubscribeService implements LoggerAwareInterface
 
     /**
      * @var string|bool
-     * If $status === true, the SubscribeService::unsubscribe() method will run.
+     * If $unsubscribe === true, the SubscribeService::unsubscribe() method will run.
      */
     protected string|bool $unsubscribe;
 
@@ -119,7 +119,6 @@ class SubscribeService implements LoggerAwareInterface
         if ($this->subscribe) {
             $this->unsubscribeFromMailingList();
         }
-        echo self::UNSUBSCRIBE;
         $this->logger->notice(self::UNSUBSCRIBE, $this->toArray());
 
         return 0;
