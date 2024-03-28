@@ -64,7 +64,7 @@ class CacheFileService implements CacheInterface
         return $this->mSet([$key => $value]);
     }
 
-    public function keys(string $keyPattern = ''): array
+    public function keys(string $keyPattern): array
     {
         return array_filter(
             array_keys($this->data), fn($key) => str_starts_with($key, self::PATTERN)

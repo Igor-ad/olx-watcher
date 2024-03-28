@@ -6,6 +6,7 @@ namespace Autodoctor\OlxWatcher\Database;
 
 use Autodoctor\OlxWatcher\Configurator;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
+use Redis;
 
 class CacheFactory
 {
@@ -17,7 +18,7 @@ class CacheFactory
         $cacheDriver = self::typeCacheDriver();
 
         return match ($cacheDriver) {
-            'redis' => new CacheRedisService(new \Redis()),
+            'redis' => new CacheRedisService(new Redis()),
             default => new CacheFileService(),
         };
     }

@@ -78,8 +78,7 @@ class SubscribeService implements LoggerAwareInterface
      */
     public function subscribe(): int
     {
-        if ($this->unsubscribe === true && $this->subscribe) {
-            echo self::UNSUBSCRIBE;
+        if ($this->unsubscribe === true) {
 
             return $this->unsubscribe();
         } else {
@@ -117,14 +116,22 @@ class SubscribeService implements LoggerAwareInterface
 
     protected function unsubscribe(): int
     {
+        if ($this->subscribe) {
+            $this->unsubscribeFromMailingList();
+        }
+        echo self::UNSUBSCRIBE;
+        $this->logger->notice(self::UNSUBSCRIBE, $this->toArray());
+
+        return 0;
+    }
+
+    private function unsubscribeFromMailingList(): void
+    {
         $updateSubscribers = array_filter(
             $this->subscribe['subscribers'], fn($email) => $email != $this->email
         );
         $this->subscribe['subscribers'] = $updateSubscribers;
         $this->cache->set($this->url, $this->subscribe);
-        $this->logger->notice(self::UNSUBSCRIBE, $this->toArray());
-
-        return 0;
     }
 
     protected function toArray(): array
