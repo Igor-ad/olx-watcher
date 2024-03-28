@@ -6,40 +6,65 @@ namespace Autodoctor\OlxWatcher\Database;
 
 use Autodoctor\OlxWatcher\Configurator;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
+use Redis;
+use RedisException;
 
 class CacheRedisService implements CacheInterface
 {
-    protected array $config;
-
     /**
-     * @throws WatcherException|\RedisException
+     * @throws WatcherException|RedisException
      */
     public function __construct(
-        protected \Redis $redis,
+        protected Redis $redis,
     )
     {
-        $this->config = Configurator::config();
-        $this->redis->connect($this->config['redis']['host']);
+        $this->redis->connect(Configurator::config()['redis']['host']);
+        $this->redis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_JSON);
     }
 
     /**
-     * @throws \RedisException
+     * @throws RedisException
      */
     public function get(string $key): mixed
     {
-            $data = $this->redis->get($key);
+        $value = $this->redis->get($key);
 
-            if ($data === false) {
-                return [];
-            }
-            return json_decode($data, true);
+        return $value === false ? [] : $value;
     }
 
     /**
-     * @throws \RedisException
+     * @throws RedisException
      */
-    public function set(string $key, mixed $data): void
+    public function mGet(array $keys): array
     {
-        $this->redis->set($key, json_encode($data));
+        $values = $this->redis->mGet($keys);
+
+        return $values === false ? [] : $values;
+    }
+
+    /**
+     * @throws RedisException
+     */
+    public function mSet(array $data): bool
+    {
+        return $this->redis->mSet($data);
+    }
+
+    /**
+     * @throws RedisException|WatcherException
+     */
+    public function set(string $key, mixed $value): bool
+    {
+        return $this->redis->set($key, $value, Configurator::expiration());
+    }
+
+    /**
+     * @throws RedisException
+     */
+    public function keys(string $keyPattern = '*'): array
+    {
+        $keys = $this->redis->keys($keyPattern);
+
+        return $keys === false ? [] : $keys;
     }
 }

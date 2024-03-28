@@ -12,6 +12,7 @@ level = "info"
 [cache]
 type = "redis"
 ;type = "file"
+exp = 600000
 
 [redis]
 host = "redis"

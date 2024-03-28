@@ -15,12 +15,13 @@ class Mailer implements LoggerAwareInterface
 {
     use Formatter, LoggerAwareTrait;
 
-    const NOTICE = 'There is no mailing list.';
+    const EMPTY_LIST = 'There is no mailing list.';
+    const MAIL_SENT = 'The email may have been sent.';
 
     protected array $config = [];
     protected array $subscribe = [];
     protected array $updatedKeys = [];
-    protected bool $isSend = true;
+    protected bool $isSent = true;
 
     /**
      * @throws WatcherException
@@ -30,8 +31,7 @@ class Mailer implements LoggerAwareInterface
     )
     {
         $this->config = Configurator::config();
-        $this->subscribe = $cache->get('subscribe');
-        $this->updatedKeys = $cache->get('updated');
+        $this->updatedKeys = $cache->get('updated') ?? [];
     }
 
     /**
@@ -40,17 +40,16 @@ class Mailer implements LoggerAwareInterface
     public function __invoke(): int
     {
         if ($this->updatedKeys === []) {
-            echo self::NOTICE . PHP_EOL;
-            $this->logger->notice(self::NOTICE);
+            $this->logger->notice(self::EMPTY_LIST);
 
             return 0;
         }
         return $this->sender();
     }
 
-    public function sendMail(string $subscriber, string $url): bool
+    public function sendMail(string $email, string $url): bool
     {
-        $to = $subscriber;
+        $to = $email;
         $subject = $this->config['mail']['subject'];
         $message = $this->priceUpdateMessage($url);
         $headers[] = 'From: ' . $this->config['mail']['sender'];
@@ -64,11 +63,10 @@ class Mailer implements LoggerAwareInterface
      */
     protected function createMailingList(): void
     {
-        if (isset($this->updatedKeys)) {
-            foreach ($this->updatedKeys as $url) {
-                foreach ($this->subscribe[$url]['subscribers'] as $subscriber) {
-                    $this->checkSender($subscriber, $url);
-                }
+        foreach ($this->updatedKeys as $url) {
+            $this->subscribe = $this->cache->get($url);
+            foreach ($this->subscribe['subscribers'] as $email) {
+                $this->send($email, $url);
             }
         }
     }
@@ -76,16 +74,16 @@ class Mailer implements LoggerAwareInterface
     /**
      * @throws MailerException
      */
-    public function checkSender(string $subscriber, string $url): int
+    public function send(string $email, string $url): int
     {
-        if (!$this->sendMail($subscriber, $url)) {
-            $this->isSend = false;
-
-            throw new MailerException(sprintf(
-                'The email is not sent to the recipient: %s', $subscriber
-            ));
+        if ($this->sendMail($email, $url)) {
+            return 0;
         }
-        return 0;
+        $this->isSent = false;
+
+        throw new MailerException(sprintf(
+            'The email is not sent to the recipient: %s', $email
+        ));
     }
 
     /**
@@ -94,8 +92,10 @@ class Mailer implements LoggerAwareInterface
     public function sender(): int
     {
         $this->createMailingList();
-        if ($this->isSend) {
-            echo 'The email may have been sent.' . PHP_EOL;
+
+        if ($this->isSent) {
+            $this->logger->notice(self::MAIL_SENT);
+
             return 0;
         }
         throw new MailerException('Error sending email.');

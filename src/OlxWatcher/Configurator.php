@@ -9,6 +9,8 @@ use Autodoctor\OlxWatcher\Exceptions\WatcherException;
 
 class Configurator
 {
+    public const EXPIRATION = 60 * 60 * 24 * 7;
+
     /**
      * @throws WatcherException
      */
@@ -20,5 +22,13 @@ class Configurator
             throw new WatcherException('Error reading configuration.');
         }
         return $config;
+    }
+
+    /**
+     * @throws WatcherException
+     */
+    public static function expiration(): int
+    {
+        return (int)Configurator::config()['cache']['exp'] ?? self::EXPIRATION;
     }
 }

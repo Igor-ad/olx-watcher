@@ -13,11 +13,10 @@ class Logger extends AbstractLogger
 {
     use LogFormatter;
 
-    protected string $logFile;
-
-    public function __construct()
+    public function __construct(
+        protected string $logFile = FilesEnum::LOG_FILE,
+    )
     {
-        $this->logFile = FilesEnum::LOG_FILE;
     }
 
     /**

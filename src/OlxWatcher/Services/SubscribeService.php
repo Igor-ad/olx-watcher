@@ -16,13 +16,19 @@ class SubscribeService implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    const NOTICE_SUBSCRIBED = 'You are already subscribed to this resource.';
-    const NOTICE_UNSUBSCRIBED = 'You have unsubscribed from this resource.';
+    const NEW_SUBSCRIBE = 'You subscribed to this resource.';
+    const SUBSCRIBE = 'You are already subscribed to this resource.';
+    const UNSUBSCRIBE = 'You have unsubscribed from this resource.';
 
     protected array $subscribe = [];
     protected string $email;
     protected string $url;
-    protected string|bool $status;
+
+    /**
+     * @var string|bool
+     * If $status === true, the SubscribeService::unsubscribe() method will run.
+     */
+    protected string|bool $unsubscribe;
 
     /**
      * @throws ValidateException|WatcherException
@@ -34,8 +40,8 @@ class SubscribeService implements LoggerAwareInterface
         $validData = ValidateService::validated($this->rules());
         $this->email = $validData['email'];
         $this->url = $validData['url'];
-        $this->status = $validData['status'];
-        $this->subscribe = $this->cache->get('subscribe');
+        $this->unsubscribe = $validData['status'];
+        $this->subscribe = $this->cache->get($this->url) ?? [];
     }
 
     private function rules(): array
@@ -72,30 +78,29 @@ class SubscribeService implements LoggerAwareInterface
      */
     public function subscribe(): int
     {
-        if ($this->status === true) {
+        if ($this->unsubscribe === true && $this->subscribe) {
+            echo self::UNSUBSCRIBE;
 
             return $this->unsubscribe();
-
         } else {
-
-            if (array_key_exists($this->url, $this->subscribe)) {
+            if ($this->subscribe) {
                 $this->addNewSubscriber();
             } else {
-                $this->subscribe[$this->url] = $this->subscribeResource($this->getPrice());
+                $this->subscribe = $this->subscribeResource($this->getPrice());
             }
+            $this->cache->set($this->url, $this->subscribe);
         }
-        $this->cache->set('subscribe', $this->subscribe);
 
         return 0;
     }
 
     protected function addNewSubscriber(): void
     {
-        if (in_array($this->email, $this->subscribe[$this->url]['subscribers'])) {
-            echo self::NOTICE_SUBSCRIBED . PHP_EOL; // insert into /var/log/cron.log
-            $this->logger->notice(self::NOTICE_SUBSCRIBED, [$this->email, $this->url]);
+        if (in_array($this->email, $this->subscribe['subscribers'])) {
+            $this->logger->notice(self::SUBSCRIBE, $this->toArray());
         } else {
-            $this->subscribe[$this->url]['subscribers'][] = $this->email;
+            $this->subscribe['subscribers'][] = $this->email;
+            $this->logger->notice(self::NEW_SUBSCRIBE, $this->toArray());
         }
     }
 
@@ -112,17 +117,18 @@ class SubscribeService implements LoggerAwareInterface
 
     protected function unsubscribe(): int
     {
-        foreach ($this->subscribe as $url => $item) {
-            $item['subscribers'] = array_filter(
-                $item['subscribers'],
-                fn($email) => $email != $this->email
-            );
-            $this->subscribe[$url] = $item;
-            $this->cache->set('subscribe', $this->subscribe);
-        }
-        echo self::NOTICE_UNSUBSCRIBED . PHP_EOL; // insert into /var/log/cron.log
-        $this->logger->info(self::NOTICE_UNSUBSCRIBED, [$this->status, $this->email, $this->url]);
+        $updateSubscribers = array_filter(
+            $this->subscribe['subscribers'], fn($email) => $email != $this->email
+        );
+        $this->subscribe['subscribers'] = $updateSubscribers;
+        $this->cache->set($this->url, $this->subscribe);
+        $this->logger->notice(self::UNSUBSCRIBE, $this->toArray());
 
         return 0;
+    }
+
+    protected function toArray(): array
+    {
+        return [json_encode($this->unsubscribe), $this->email, $this->url];
     }
 }

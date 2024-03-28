@@ -8,5 +8,11 @@ interface CacheInterface
 {
     public function get(string $key): mixed;
 
-    public function set(string $key, mixed $data): void;
+    public function mGet(array $keys): array;
+
+    public function keys(string $keyPattern): array;
+
+    public function set(string $key, mixed $value): bool;
+
+    public function mSet(array $data): bool;
 }

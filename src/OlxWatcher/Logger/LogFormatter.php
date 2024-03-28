@@ -12,19 +12,14 @@ trait LogFormatter
 
         return sprintf(
             '%s | pid: %s | %s: %s %s %s',
-            $this->dateToString(), $pid, $level,
+            date('Y-m-d H:i:s'), $pid, $level,
             $message, $this->contextToString($context), PHP_EOL
         );
     }
 
     public function cronToString(string $message): string
     {
-        return sprintf('%s %s', $this->dateToString($message), PHP_EOL);
-    }
-
-    public function dateToString(string $message = ''): string
-    {
-        return sprintf('%s %s', date('Y-m-d H:i:s '), $message);
+        return sprintf('%s %s%s', date('Y-m-d H:i:s'), $message, PHP_EOL);
     }
 
     protected function contextToString(array $context): string
