@@ -8,8 +8,8 @@ use Autodoctor\OlxWatcher\Mail\Mailer as MailService;
 
 class Mailer extends AbstractCommand
 {
-    protected const START = 'Mailer started.';
-    protected const STOP = 'Mailer stopped.';
+    public const START = 'Mailer started.';
+    public const STOP = 'Mailer stopped.';
     protected const ERROR = 'Mailer error. ';
 
     public function __invoke(): int|string

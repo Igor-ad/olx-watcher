@@ -16,15 +16,11 @@ abstract class AbstractCommand
         $logger = new Logger();
 
         try {
-            echo $logger->cronToString(static::START);
             $logger->info(static::START);
-
             $cacheDriver = CacheFactory::getCacheDriver();
             $service = new $serviceName($cacheDriver);
             $service->setLogger($logger);
             $result = $service();
-
-            echo $logger->cronToString(static::STOP);
             $logger->info(static::STOP);
 
             return $result;

@@ -17,11 +17,6 @@ trait LogFormatter
         );
     }
 
-    public function cronToString(string $message): string
-    {
-        return sprintf('%s %s%s', date('Y-m-d H:i:s'), $message, PHP_EOL);
-    }
-
     protected function contextToString(array $context): string
     {
         return implode(' | ', $context);

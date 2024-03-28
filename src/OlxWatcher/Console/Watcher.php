@@ -8,8 +8,8 @@ use Autodoctor\OlxWatcher\Services\WatcherService;
 
 class Watcher extends AbstractCommand
 {
-    protected const START = 'Watcher started.';
-    protected const STOP = 'Watcher stopped.';
+    public const START = 'Watcher started.';
+    public const STOP = 'Watcher stopped.';
     protected const ERROR = 'Watcher error. ';
 
     public function __invoke(): int|string
