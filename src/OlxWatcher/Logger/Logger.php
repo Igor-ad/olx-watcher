@@ -26,29 +26,22 @@ class Logger extends AbstractLogger
      */
     public function log($level, string|\Stringable $message, array $context = []): void
     {
-        if (!$this->checkValidArgument($level)) {
+        if (!$this->isValidLevel($level)) {
             throw new InvalidArgumentException('This logging level is not available.');
         }
         FileProcessor::putContent(
             $this->logFile, $this->toString($level, $message, $context), FILE_APPEND);
     }
 
-    private function checkValidArgument(string $level): bool
+    private function isValidLevel(string $level): bool
     {
-        return in_array($level, $this->levelToArray(), true);
+        return in_array($level, $this->logLevelToArray(), true);
     }
 
-    private function levelToArray(): array
+    private function logLevelToArray(): array
     {
-        return [
-            LogLevel::ALERT,
-            LogLevel::CRITICAL,
-            LogLevel::DEBUG,
-            LogLevel::EMERGENCY,
-            LogLevel::ERROR,
-            LogLevel::INFO,
-            LogLevel::NOTICE,
-            LogLevel::WARNING,
-        ];
+        $logLevel = new LogLevel();
+        $reflection = new \ReflectionClass($logLevel);
+        return $reflection->getConstants();
     }
 }
