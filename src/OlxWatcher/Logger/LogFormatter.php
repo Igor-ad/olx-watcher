@@ -31,4 +31,13 @@ trait LogFormatter
             default => $pid,
         };
     }
+
+    public function getExceptionLogContext(\Exception $error): array
+    {
+        return [
+            $error->getMessage(),
+            $error->getCode(),
+            PHP_EOL . $error->getTraceAsString(),
+        ];
+    }
 }

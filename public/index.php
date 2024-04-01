@@ -1,23 +1,24 @@
 <?php
 
-use Autodoctor\OlxWatcher\Database\CacheFactory;
+use Autodoctor\OlxWatcher\Controllers\SubscribeController;
 use Autodoctor\OlxWatcher\Logger\Logger;
 use Autodoctor\OlxWatcher\Services\SubscribeService;
 
 require __DIR__ . '/../vendor/autoload.php';
 
 const OK = 'SubscribeService. OK!';
-const WRONG = 'Subscribe. Something went wrong';
+const WRONG = 'Subscribe. Something went wrong.';
 const ERROR = 'Subscribe error. ';
 
 $logger = new Logger();
 
 try {
-    $cacheDriver = CacheFactory::getCacheDriver();
-    $subscribe = new SubscribeService($cacheDriver);
-    $subscribe->setLogger($logger);
+    $service = new SubscribeService();
+    $service->setLogger($logger);
+    $controller = new SubscribeController($service);
+    $result = $controller();
 
-    if ($subscribe->subscribe() === 0) {
+    if ($result === 0) {
         echo OK;
         $logger->info(OK);
     } else {
@@ -26,7 +27,7 @@ try {
     }
 } catch (Exception $e) {
     echo ERROR . $e->getMessage();
-    $logger->error(ERROR, [$e->getMessage(), $e->getCode(), PHP_EOL . $e->getTraceAsString()]);
+    $logger->error(ERROR, $logger->getExceptionLogContext($e));
 }
 
 

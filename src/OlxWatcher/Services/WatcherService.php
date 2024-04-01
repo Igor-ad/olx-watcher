@@ -5,32 +5,23 @@ declare(strict_types=1);
 namespace Autodoctor\OlxWatcher\Services;
 
 use Autodoctor\OlxWatcher\Database\CacheFileService;
-use Autodoctor\OlxWatcher\Database\CacheInterface;
 use Autodoctor\OlxWatcher\Database\CacheRedisService;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
-use Autodoctor\OlxWatcher\Parser;
-use Autodoctor\OlxWatcher\ParserFactory;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
 
-class WatcherService implements LoggerAwareInterface
+class WatcherService extends BaseService
 {
-    use LoggerAwareTrait;
-
     const EMPTY_LIST = 'No subscriptions yet.';
+    const PRICE_CHANGED = 'The price has changed.';
 
-    protected array $subscribe = [];
+    protected array $subscribeCollect = [];
     protected array $subscribeKeys = [];
     protected array $updatedKeys = [];
-    protected Parser $parser;
 
-    public function __construct(
-        protected CacheInterface $cache,
-    )
+    public function __construct()
     {
+        parent::__construct();
         $this->subscribeKeys = $this->cache->keys('http*');
-        $this->subscribe = $this->cache->mGet($this->subscribeKeys);
-        $this->parser = ParserFactory::getParser();
+        $this->setSubscribeCollect($this->subscribeKeys);
     }
 
     /**
@@ -44,6 +35,11 @@ class WatcherService implements LoggerAwareInterface
             return 0;
         }
         return $this->watch();
+    }
+
+    protected function setSubscribeCollect(array $keys): void
+    {
+        $this->subscribeCollect = $this->cache->mGet($keys);
     }
 
     /**
@@ -66,33 +62,25 @@ class WatcherService implements LoggerAwareInterface
     {
         foreach ($this->subscribeKeys as $key => $url) {
             if ($this->cache instanceof CacheFileService) {
-                $this->subscribe[$url] = $this->comparator(
-                    $this->subscribe[$url], $url, $this->priceParser($url)
+                $this->subscribeCollect[$url] = $this->comparator(
+                    $this->subscribeCollect[$url], $url, $this->getPrice($url)
                 );
             }
 
             if ($this->cache instanceof CacheRedisService) {
-                $this->subscribe[$key] = $this->comparator(
-                    $this->subscribe[$key], $url, $this->priceParser($url)
+                $this->subscribeCollect[$key] = $this->comparator(
+                    $this->subscribeCollect[$key], $url, $this->getPrice($url)
                 );
             }
         }
-    }
-
-    /**
-     * @throws WatcherException
-     */
-    public function priceParser(string $url): string
-    {
-        $this->parser->setTargetUrl($url);
-        $this->parser->parse();
-        return $this->parser->getPrice();
     }
 
     protected function comparator(array $subscribeItem, string $url, string $price): array
     {
         if ($subscribeItem['last_price'] !== $price) {
             $this->updatedKeys[] = $url;
+            $this->logger->notice(self::PRICE_CHANGED, [$price, $url]);
+
             return $this->subscribeResource($subscribeItem, $price);
         }
         return $subscribeItem;

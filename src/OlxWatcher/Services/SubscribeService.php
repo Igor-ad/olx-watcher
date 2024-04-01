@@ -4,137 +4,68 @@ declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Services;
 
-use Autodoctor\OlxWatcher\Database\CacheInterface;
-use Autodoctor\OlxWatcher\Exceptions\ValidateException;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
-use Autodoctor\OlxWatcher\ParserFactory;
-use Autodoctor\OlxWatcher\Validator\ValidateService;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
 
-class SubscribeService implements LoggerAwareInterface
+class SubscribeService extends BaseService
 {
-    use LoggerAwareTrait;
-
-    const NEW_SUBSCRIBE = 'You subscribed to this resource.';
-    const SUBSCRIBE = 'You are already subscribed to this resource.';
-    const UNSUBSCRIBE = 'You have unsubscribed from this resource.';
-
-    protected array $subscribe = [];
-    protected string $email;
-    protected string $url;
-
-    /**
-     * @var string|bool
-     * If $unsubscribe === true, the SubscribeService::unsubscribe() method will run.
-     */
-    protected string|bool $unsubscribe;
-
-    /**
-     * @throws ValidateException|WatcherException
-     */
-    public function __construct(
-        protected CacheInterface $cache,
-    )
-    {
-        $validData = ValidateService::validated($this->rules());
-        $this->email = $validData['email'];
-        $this->url = $validData['url'];
-        $this->unsubscribe = $validData['status'];
-        $this->subscribe = $this->cache->get($this->url) ?? [];
-    }
-
-    private function rules(): array
-    {
-        return [
-            'email' => [
-                'filter' => FILTER_VALIDATE_EMAIL,
-            ],
-            'url' => [
-                'filter' => FILTER_VALIDATE_URL,
-                'flags' => FILTER_FLAG_PATH_REQUIRED,
-            ],
-            'status' => [
-                'filter' => FILTER_CALLBACK,
-                'options' => fn($value) => $value === 'unsubscribe' ? true : '',
-            ],
-        ];
-    }
+    const NEW_SUBSCRIBE = 'Subscription to the resource has been completed.';
+    const SUBSCRIBE = 'A subscription to this resource has already been completed.';
+    const UNSUBSCRIBE = 'Unsubscribe from the resource is complete.';
 
     /**
      * @throws WatcherException
      */
-    protected function getPrice(): string
+    public function subscribe(string $url, string $email): int
     {
-        $parser = ParserFactory::getParser();
-        $parser->setTargetUrl($this->url);
-        $parser->parse();
-
-        return $parser->getPrice();
-    }
-
-    /**
-     * @throws WatcherException
-     */
-    public function subscribe(): int
-    {
-        if ($this->unsubscribe === true) {
-
-            return $this->unsubscribe();
+        if ($this->subscribe) {
+            $this->addNewSubscriber($url, $email);
         } else {
-            if ($this->subscribe) {
-                $this->addNewSubscriber();
-            } else {
-                $this->subscribe = $this->subscribeResource($this->getPrice());
-            }
-            $this->cache->set($this->url, $this->subscribe);
+            $price = $this->getPrice($url);
+            $this->subscribe = $this->subscribeResource($price, $email);
         }
+        $this->cache->set($url, $this->subscribe);
 
         return 0;
     }
 
-    protected function addNewSubscriber(): void
+    protected function addNewSubscriber(string $url, string $email): void
     {
-        if (in_array($this->email, $this->subscribe['subscribers'])) {
-            $this->logger->notice(self::SUBSCRIBE, $this->toArray());
+        if (in_array($email, $this->subscribe['subscribers'])) {
+
+            $this->logger->notice(self::SUBSCRIBE, [$email, $url]);
         } else {
-            $this->subscribe['subscribers'][] = $this->email;
-            $this->logger->notice(self::NEW_SUBSCRIBE, $this->toArray());
+            $this->subscribe['subscribers'][] = $email;
+            $this->logger->notice(self::NEW_SUBSCRIBE, [$email, $url]);
         }
     }
 
-    protected function subscribeResource(string $price): array
+    protected function subscribeResource(string $price, string $email): array
     {
         return [
             'previous_price' => $price,
             'last_price' => $price,
             'previous_time' => date("Y-m-d H:i:s"),
             'last_time' => date("Y-m-d H:i:s"),
-            'subscribers' => [$this->email]
+            'subscribers' => [$email]
         ];
     }
 
-    protected function unsubscribe(): int
+    public function unsubscribe(string $url, string $email): int
     {
         if ($this->subscribe) {
-            $this->unsubscribeFromMailingList();
+            $this->unsubscribeFromMailingList($url, $email);
         }
-        $this->logger->notice(self::UNSUBSCRIBE, $this->toArray());
+        $this->logger->notice(self::UNSUBSCRIBE, [$email, $url]);
 
         return 0;
     }
 
-    private function unsubscribeFromMailingList(): void
+    private function unsubscribeFromMailingList(string $url, string $email): void
     {
         $updateSubscribers = array_filter(
-            $this->subscribe['subscribers'], fn($email) => $email != $this->email
+            $this->subscribe['subscribers'], fn($mailBox) => $mailBox !== $email
         );
         $this->subscribe['subscribers'] = $updateSubscribers;
-        $this->cache->set($this->url, $this->subscribe);
-    }
-
-    protected function toArray(): array
-    {
-        return [json_encode($this->unsubscribe), $this->email, $this->url];
+        $this->cache->set($url, $this->subscribe);
     }
 }

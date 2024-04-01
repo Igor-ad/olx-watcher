@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Console;
 
-use Autodoctor\OlxWatcher\Database\CacheFactory;
 use Autodoctor\OlxWatcher\Logger\Logger;
 
 abstract class AbstractCommand
@@ -17,15 +16,14 @@ abstract class AbstractCommand
 
         try {
             $logger->info(static::START);
-            $cacheDriver = CacheFactory::getCacheDriver();
-            $service = new $serviceName($cacheDriver);
+            $service = new $serviceName();
             $service->setLogger($logger);
             $result = $service();
             $logger->info(static::STOP);
 
             return $result;
         } catch (\Exception $e) {
-            $logger->error(static::ERROR, [$e->getMessage(), $e->getCode(), PHP_EOL . $e->getTraceAsString()]);
+            $logger->error(static::ERROR, $logger->getExceptionLogContext($e));
 
             return static::ERROR . $e->getMessage();
         }

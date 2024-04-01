@@ -5,33 +5,29 @@ declare(strict_types=1);
 namespace Autodoctor\OlxWatcher\Mail;
 
 use Autodoctor\OlxWatcher\Configurator;
-use Autodoctor\OlxWatcher\Database\CacheInterface;
 use Autodoctor\OlxWatcher\Exceptions\MailerException;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
+use Autodoctor\OlxWatcher\Services\BaseService;
 
-class Mailer implements LoggerAwareInterface
+class Mailer extends BaseService
 {
-    use Formatter, LoggerAwareTrait;
+    use Formatter;
 
     const EMPTY_LIST = 'There is no mailing list.';
     const MAIL_SENT = 'The email may have been sent.';
 
     protected array $config = [];
-    protected array $subscribe = [];
     protected array $updatedKeys = [];
-    protected bool $isSent = true;
+    protected bool $wasSent = true;
 
     /**
-     * @throws WatcherException
+     * @throws \RedisException|WatcherException
      */
-    public function __construct(
-        protected CacheInterface $cache
-    )
+    public function __construct()
     {
+        parent::__construct();
         $this->config = Configurator::config();
-        $this->updatedKeys = $cache->get('updated') ?? [];
+        $this->updatedKeys = $this->cache->get('updated') ?? [];
     }
 
     /**
@@ -51,7 +47,7 @@ class Mailer implements LoggerAwareInterface
     {
         $to = $email;
         $subject = $this->config['mail']['subject'];
-        $message = $this->priceUpdateMessage($url);
+        $message = $this->formatMessage($url, $email);
         $headers[] = 'From: ' . $this->config['mail']['sender'];
         $headers[] = 'X-Mailer: PHP/' . phpversion();
 
@@ -64,7 +60,7 @@ class Mailer implements LoggerAwareInterface
     protected function createMailingList(): void
     {
         foreach ($this->updatedKeys as $url) {
-            $this->subscribe = $this->cache->get($url);
+            $this->setSubscribe($url);
             foreach ($this->subscribe['subscribers'] as $email) {
                 $this->send($email, $url);
             }
@@ -79,7 +75,7 @@ class Mailer implements LoggerAwareInterface
         if ($this->sendMail($email, $url)) {
             return 0;
         }
-        $this->isSent = false;
+        $this->wasSent = false;
 
         throw new MailerException(sprintf(
             'The email is not sent to the recipient: %s', $email
@@ -93,7 +89,7 @@ class Mailer implements LoggerAwareInterface
     {
         $this->createMailingList();
 
-        if ($this->isSent) {
+        if ($this->wasSent) {
             $this->logger->notice(self::MAIL_SENT);
 
             return 0;
