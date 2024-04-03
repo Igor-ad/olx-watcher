@@ -22,7 +22,7 @@ class ValidateService
     public function validate(array $rules): array
     {
         $data = filter_var_array($_REQUEST, $rules);
-        $errors = $this->errors($data);
+        $errors = $this->validationErrors($data);
 
         if ($data === false || $errors) {
             throw new ValidateException(sprintf(
@@ -33,7 +33,7 @@ class ValidateService
         return $data;
     }
 
-    protected function errors(array $data): array
+    protected function validationErrors(array $data): array
     {
         return array_filter($data, fn($value) => ($value === false) || ($value === null));
     }

@@ -15,27 +15,32 @@ class SubscribeService extends BaseService
     /**
      * @throws WatcherException
      */
-    public function subscribe(string $url, string $email): int
+    public function subscribe(string $url, string $email): string
     {
+        $message = '';
         if ($this->subscribe) {
-            $this->addNewSubscriber($url, $email);
+            $message = $this->addNewSubscriber($url, $email);
         } else {
             $price = $this->getPrice($url);
             $this->subscribe = $this->subscribeResource($price, $email);
+            $message = self::NEW_SUBSCRIBE;
         }
         $this->cache->set($url, $this->subscribe);
 
-        return 0;
+        return $message;
     }
 
-    protected function addNewSubscriber(string $url, string $email): void
+    protected function addNewSubscriber(string $url, string $email): string
     {
         if (in_array($email, $this->subscribe['subscribers'])) {
-
             $this->logger->notice(self::SUBSCRIBE, [$email, $url]);
+
+            return self::SUBSCRIBE;
         } else {
             $this->subscribe['subscribers'][] = $email;
             $this->logger->notice(self::NEW_SUBSCRIBE, [$email, $url]);
+
+            return self::NEW_SUBSCRIBE;
         }
     }
 
@@ -50,14 +55,14 @@ class SubscribeService extends BaseService
         ];
     }
 
-    public function unsubscribe(string $url, string $email): int
+    public function unsubscribe(string $url, string $email): string
     {
         if ($this->subscribe) {
             $this->unsubscribeFromMailingList($url, $email);
         }
         $this->logger->notice(self::UNSUBSCRIBE, [$email, $url]);
 
-        return 0;
+        return self::UNSUBSCRIBE;
     }
 
     private function unsubscribeFromMailingList(string $url, string $email): void

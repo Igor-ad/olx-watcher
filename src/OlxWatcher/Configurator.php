@@ -14,7 +14,7 @@ class Configurator
     /**
      * @throws WatcherException
      */
-    public static function config(): array|false
+    public static function config(): array
     {
         $config = parse_ini_file(FilesEnum::CONFIG_FILE, true);
 

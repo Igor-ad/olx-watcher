@@ -27,13 +27,14 @@ class SubscribeController
     /**
      * @throws WatcherException
      */
-    public function __invoke(): int
+    public function __invoke(): string
     {
         if ($this->validData['status'] === true) {
-            return $this->unsubscribe();
+            $message = $this->unsubscribe();
         } else {
-            return $this->subscribe();
+            $message = $this->subscribe();
         }
+        return json_encode($this->toArray($message));
     }
 
     private function rules(): array
@@ -64,7 +65,7 @@ class SubscribeController
     /**
      * @throws WatcherException
      */
-    public function subscribe(): int
+    public function subscribe(): string
     {
         return $this->service->subscribe(
             $this->validData['url'],
@@ -72,11 +73,24 @@ class SubscribeController
         );
     }
 
-    public function unsubscribe(): int
+    public function unsubscribe(): string
     {
         return $this->service->unsubscribe(
             $this->validData['url'],
             $this->validData['email'],
         );
+    }
+
+    public function toArray(mixed $value): array
+    {
+        return [
+            'data' => [
+                'email' => $this->validData['email'],
+                'url' => $this->validData['url'],
+                'message' => [
+                    $value,
+                ],
+            ],
+        ];
     }
 }

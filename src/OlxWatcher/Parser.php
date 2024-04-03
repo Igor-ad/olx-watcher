@@ -10,18 +10,18 @@ class Parser
 {
     use CurlTrait;
 
-    const STRING_START = '<title data-rh="true">';
-    const STRING_END = '</title>';
-    const CURRENCY_START = ': ';
-    const CURRENCY_STRING = 'грн';
-    const ERROR = 'Хьюстон, в нас проблема.';
-    const TIME_OUT = 15;
-    const CONNECT_TIMEOUT = 20;
+    private const STRING_START = '<title data-rh="true">';
+    private const STRING_END = '</title>';
+    private const CURRENCY_START = ': ';
+    private const CURRENCY_STRING = 'грн';
+    private const ERROR = 'Хьюстон, в нас проблема.';
+    private const TIME_OUT = 15;
+    private const CONNECT_TIMEOUT = 20;
 
-    protected string $targetUrl;
-    protected string $target = '';
-    protected string $title = '';
-    protected string $price = '';
+    private string $targetUrl;
+    private string $target = '';
+    private string $title = '';
+    private string $price = '';
 
     /**
      * @throws WatcherException
@@ -47,7 +47,7 @@ class Parser
     /**
      * @throws WatcherException
      */
-    public function checkUrl(string $target): bool
+    protected function checkUrl(string $target): bool
     {
         if (stripos($target, self::STRING_END) === false) {
             throw new WatcherException('Target URL not available.');
@@ -55,7 +55,7 @@ class Parser
         return true;
     }
 
-    protected function cutter(string $input, string $start, string $end): string
+    private function cutter(string $input, string $start, string $end): string
     {
         $temp = stristr($input, $end, true);
 
@@ -65,7 +65,7 @@ class Parser
         );
     }
 
-    public function parsePrice(): string
+    private function parsePrice(): string
     {
         $tempPrice = trim($this->cutter(
             input: $this->title,
@@ -75,7 +75,7 @@ class Parser
         return str_replace(' ', '', $tempPrice);
     }
 
-    public function parseTitle(): string
+    private function parseTitle(): string
     {
         return $this->cutter(
             input: $this->target,
