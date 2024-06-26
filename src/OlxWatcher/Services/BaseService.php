@@ -21,8 +21,7 @@ class BaseService implements LoggerAwareInterface
     /**
      * @throws \RedisException|WatcherException
      */
-    public function __construct(
-    )
+    public function __construct()
     {
         $this->setCache();
     }

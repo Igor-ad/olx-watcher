@@ -9,15 +9,13 @@ require __DIR__ . '/../vendor/autoload.php';
 const ERROR = 'Subscribe error. ';
 
 $logger = new Logger();
+$service = new SubscribeService();
+$service->setLogger($logger);
+$controller = new SubscribeController($service);
 
 try {
-    $service = new SubscribeService();
-    $service->setLogger($logger);
-    $controller = new SubscribeController($service);
     echo $controller();
 } catch (Exception $e) {
     $logger->error(ERROR, $logger->getExceptionLogContext($e));
-    echo ERROR;
+    echo $controller->errorResponse(ERROR);
 }
-
-

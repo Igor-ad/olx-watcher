@@ -13,28 +13,24 @@ class SubscribeController
 {
     protected array $validData;
 
-    /**
-     * @throws ValidateException
-     */
     public function __construct(
-        private SubscribeService $service,
-    )
-    {
-        $this->validData = $this->getValidData();
-        $this->service->setSubscribe($this->validData['url']);
-    }
+        protected SubscribeService $service,
+    ) {}
 
     /**
      * @throws WatcherException
      */
     public function __invoke(): string
     {
+        $this->validData = $this->getValidData();
+        $this->service->setSubscribe($this->validData['url']);
+
         if ($this->validData['status'] === true) {
             $message = $this->unsubscribe();
         } else {
             $message = $this->subscribe();
         }
-        return json_encode($this->toArray($message));
+        return json_encode($this->responseToArray($message));
     }
 
     private function rules(): array
@@ -81,15 +77,24 @@ class SubscribeController
         );
     }
 
-    public function toArray(mixed $value): array
+    public function errorResponse(string $errorMessage): string
+    {
+        return json_encode([
+            'data' => [
+                'success' => false,
+                'message' => $errorMessage,
+            ]
+        ]);
+    }
+
+    public function responseToArray(string $message): array
     {
         return [
             'data' => [
+                'success' => true,
                 'email' => $this->validData['email'],
                 'url' => $this->validData['url'],
-                'message' => [
-                    $value,
-                ],
+                'message' => $message,
             ],
         ];
     }

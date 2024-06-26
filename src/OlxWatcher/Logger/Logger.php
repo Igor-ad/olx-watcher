@@ -17,9 +17,7 @@ class Logger extends AbstractLogger
 
     public function __construct(
         protected string $logFile = FilesEnum::LOG_FILE,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @throws WatcherException|InvalidArgumentException
