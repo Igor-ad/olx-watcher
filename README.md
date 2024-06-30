@@ -37,7 +37,6 @@ Example:
 http://example-olx-watcher/index.php?status=subscribe&email=test@mail.com&url=https://www.olx.ua/powerbank.html
 ```
 
-
 To unsubscribe from all subscriptions you must send a GET request:
 ```
 http://example-olx-watcher/index.php?email=test@mail.com&status=unsubscribe
