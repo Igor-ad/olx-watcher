@@ -25,7 +25,7 @@ abstract class AbstractCommand
         }
     }
 
-    protected function commandClosure(string $serviceName, $logger): \Closure
+    protected function commandClosure(string $serviceName, Logger $logger): \Closure
     {
         return function () use ($logger, $serviceName) {
             $logger->info(static::START);

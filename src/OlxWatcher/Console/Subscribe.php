@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Autodoctor\OlxWatcher\Console;
 
 use Autodoctor\OlxWatcher\Controllers\SubscribeController;
+use Autodoctor\OlxWatcher\Logger\Logger;
 use Autodoctor\OlxWatcher\Services\SubscribeService;
 
 class Subscribe extends AbstractCommand
@@ -16,7 +17,7 @@ class Subscribe extends AbstractCommand
         return $this->handler(SubscribeService::class);
     }
 
-    protected function commandClosure(string $serviceName, $logger): \Closure
+    protected function commandClosure(string $serviceName, Logger $logger): \Closure
     {
         return function () use ($logger, $serviceName) {
             $service = new $serviceName();
