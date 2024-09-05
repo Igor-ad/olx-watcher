@@ -15,6 +15,19 @@ abstract class AbstractCommand
         $logger = new Logger();
 
         try {
+            $closure = $this->commandClosure($serviceName, $logger);
+
+            return $closure();
+        } catch (\Exception $e) {
+            $logger->error(static::ERROR, $logger->getExceptionLogContext($e));
+
+            return static::ERROR . $e->getMessage();
+        }
+    }
+
+    protected function commandClosure(string $serviceName, $logger): \Closure
+    {
+        return function () use ($logger, $serviceName) {
             $logger->info(static::START);
             $service = new $serviceName();
             $service->setLogger($logger);
@@ -22,10 +35,6 @@ abstract class AbstractCommand
             $logger->info(static::STOP);
 
             return $result;
-        } catch (\Exception $e) {
-            $logger->error(static::ERROR, $logger->getExceptionLogContext($e));
-
-            return static::ERROR . $e->getMessage();
-        }
+        };
     }
 }
