@@ -43,3 +43,8 @@ http://example-olx-watcher/index.php?email=test@mail.com&status=unsubscribe
 ```
 
 The cron script checks every 15 minutes for changes in the price of a product and, if there is a change, sends emails to subscribers.
+
+
+Example email:
+
+![image](public/test_mail.jpg)
