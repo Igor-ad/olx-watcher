@@ -50,7 +50,7 @@ class WatcherService extends BaseService
         $this->subscribeIterator();
 
         $this->cache->set('updated', $this->updatedKeys);
-        $this->cache->mSet($this->subscribe);
+        $this->cache->mSet($this->subscribeCollect);
 
         return 0;
     }

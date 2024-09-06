@@ -16,7 +16,7 @@ class BaseService implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     protected ?CacheInterface $cache = null;
-    protected array $subscribe;
+    protected array $subscribe = [];
 
     /**
      * @throws \RedisException|WatcherException

@@ -17,7 +17,6 @@ class SubscribeService extends BaseService
      */
     public function subscribe(string $url, string $email): string
     {
-        $message = '';
         if ($this->subscribe) {
             $message = $this->addNewSubscriber($url, $email);
         } else {

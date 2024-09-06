@@ -2,6 +2,7 @@ apiVersion = "apps/v1.0.0"
 
 [metadata]
 name = "olx-watcher"
+app_url = "http://olx-watcher.com"
 labels[app] = "olx-watcher-worker"
 labels[description] = "Tracking prices for OLX products and their changes"
 labels[env] = "dev"
