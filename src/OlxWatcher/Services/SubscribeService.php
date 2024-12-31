@@ -1,9 +1,8 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Services;
 
+use Autodoctor\OlxWatcher\DTO\SubjectFactory;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
 
 class SubscribeService extends BaseService
@@ -17,46 +16,35 @@ class SubscribeService extends BaseService
      */
     public function subscribe(string $url, string $email): string
     {
-        if ($this->subscribe) {
+        if ($this->subject) {
             $message = $this->addNewSubscriber($url, $email);
         } else {
             $price = $this->getPrice($url);
-            $this->subscribe = $this->subscribeResource($price, $email);
+            $this->subject = SubjectFactory::createFromRequest($price, $email);
             $message = self::NEW_SUBSCRIBE;
         }
-        $this->cache->set($url, $this->subscribe);
+        $this->cache->set($url, $this->subject->toArray());
 
         return $message;
     }
 
     protected function addNewSubscriber(string $url, string $email): string
     {
-        if (in_array($email, $this->subscribe['subscribers'])) {
+        if (in_array($email, $this->subject->subscribers)) {
             $this->logger->notice(self::SUBSCRIBE, [$email, $url]);
 
             return self::SUBSCRIBE;
         } else {
-            $this->subscribe['subscribers'][] = $email;
+            $this->subject->subscribers[] = $email;
             $this->logger->notice(self::NEW_SUBSCRIBE, [$email, $url]);
 
             return self::NEW_SUBSCRIBE;
         }
     }
 
-    protected function subscribeResource(string $price, string $email): array
-    {
-        return [
-            'previous_price' => $price,
-            'last_price' => $price,
-            'previous_time' => date("Y-m-d H:i:s"),
-            'last_time' => date("Y-m-d H:i:s"),
-            'subscribers' => [$email]
-        ];
-    }
-
     public function unsubscribe(string $url, string $email): string
     {
-        if ($this->subscribe) {
+        if ($this->subject) {
             $this->unsubscribeFromMailingList($url, $email);
         }
         $this->logger->notice(self::UNSUBSCRIBE, [$email, $url]);
@@ -67,9 +55,10 @@ class SubscribeService extends BaseService
     private function unsubscribeFromMailingList(string $url, string $email): void
     {
         $updateSubscribers = array_filter(
-            $this->subscribe['subscribers'], fn($mailBox) => $mailBox !== $email
+            $this->subject->subscribers,
+            fn($mailBox) => $mailBox !== $email
         );
-        $this->subscribe['subscribers'] = $updateSubscribers;
-        $this->cache->set($url, $this->subscribe);
+        $this->subject->subscribers = $updateSubscribers;
+        $this->cache->set($url, $this->subject->toArray());
     }
 }

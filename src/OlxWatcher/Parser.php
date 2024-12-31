@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher;
 
@@ -23,6 +21,16 @@ class Parser
     private string $title = '';
     private string $price = '';
 
+    public function getPrice(): string
+    {
+        return $this->price;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
     /**
      * @throws WatcherException
      */
@@ -37,11 +45,6 @@ class Parser
     public function setTargetUrl(string $targetUrl): void
     {
         $this->targetUrl = $targetUrl;
-    }
-
-    public function getPrice(): string
-    {
-        return $this->price;
     }
 
     /**

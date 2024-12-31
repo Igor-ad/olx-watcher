@@ -1,11 +1,11 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Services;
 
 use Autodoctor\OlxWatcher\Database\CacheFactory;
-use Autodoctor\OlxWatcher\Database\CacheInterface;
+use Autodoctor\OlxWatcher\Database\Cache;
+use Autodoctor\OlxWatcher\DTO\SubjectDto;
+use Autodoctor\OlxWatcher\DTO\SubjectFactory;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
 use Autodoctor\OlxWatcher\ParserFactory;
 use Psr\Log\LoggerAwareInterface;
@@ -15,8 +15,8 @@ class BaseService implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    protected ?CacheInterface $cache = null;
-    protected array $subscribe = [];
+    protected Cache $cache;
+    protected SubjectDto|bool $subject;
 
     /**
      * @throws \RedisException|WatcherException
@@ -34,9 +34,10 @@ class BaseService implements LoggerAwareInterface
         $this->cache = CacheFactory::getCacheDriver();
     }
 
-    public function setSubscribe(string $url): void
+    public function setSubject(string $url): void
     {
-        $this->subscribe = $this->cache->get($url) ?? [];
+        $data = $this->cache->get($url);
+        $this->subject = $data ? SubjectFactory::createFromArray($data) : false;
     }
 
     /**
