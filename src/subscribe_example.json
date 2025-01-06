@@ -1,19 +1,15 @@
 {
-    "subscribe": {
-        "https:\/\/www.olx.ua\/d\/uk\/obyavlenie\/powerbank-Tl6o5.html": {
-            "previous_price": "333",
-            "last_price": "290",
-            "previous_time": "2024-03-08 12:25:25",
-            "last_time": "2024-03-08 12:03:56",
-            "subscribers": [
-                "nika@test.mail.com",
-                "vlad@test.mail.com",
-                "igor@test.mail.com",
-                "ira@test.mail.com"
-            ]
-        }
-    },
-    "updated": [
-        "https:\/\/www.olx.ua\/d\/uk\/obyavlenie\/powerbank-Tl6o5.html"
-    ]
+  "https:\/\/www.olx.ua\/d\/uk\/obyavlenie\/ppowerbank-Tl6o5.html": {
+    "previous_price": "333",
+    "last_price": "290",
+    "previous_time": "2025-01-06 10:16:03",
+    "last_time": "2025-01-06 12:38:03",
+    "subscribers": [
+      "nika@test.mail.com",
+      "vlad@test.mail.com",
+      "igor@test.mail.com",
+      "ira@test.mail.com"
+    ],
+    "has_update": true
+  }
 }

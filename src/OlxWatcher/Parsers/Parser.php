@@ -1,7 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Autodoctor\OlxWatcher;
+namespace Autodoctor\OlxWatcher\Parsers;
 
+use Autodoctor\OlxWatcher\CurlTrait;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
 
 class Parser

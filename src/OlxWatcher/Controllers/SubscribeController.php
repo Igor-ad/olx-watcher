@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Controllers;
 
@@ -23,7 +21,7 @@ class SubscribeController
     public function __invoke(): string
     {
         $this->validData = $this->getValidData();
-        $this->service->setSubscribe($this->validData['url']);
+        $this->service->setSubject($this->validData['url']);
 
         if ($this->validData['status'] === true) {
             $message = $this->unsubscribe();

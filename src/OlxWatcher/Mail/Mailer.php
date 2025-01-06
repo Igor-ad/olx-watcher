@@ -1,15 +1,13 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Mail;
 
 use Autodoctor\OlxWatcher\Configurator;
 use Autodoctor\OlxWatcher\Exceptions\MailerException;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
-use Autodoctor\OlxWatcher\Services\BaseService;
+use Autodoctor\OlxWatcher\Services\AbstractService;
 
-class Mailer extends BaseService
+class Mailer extends AbstractService
 {
     use Formatter;
 
@@ -17,7 +15,6 @@ class Mailer extends BaseService
     const MAIL_SENT = 'The email may have been sent.';
 
     protected array $config = [];
-    protected array $updatedKeys = [];
     protected bool $wasSent = true;
 
     /**
@@ -27,7 +24,7 @@ class Mailer extends BaseService
     {
         parent::__construct();
         $this->config = Configurator::config();
-        $this->updatedKeys = $this->cache->get('updated') ?? [];
+        $this->setUpdatedKeys();
     }
 
     /**
@@ -41,6 +38,15 @@ class Mailer extends BaseService
             return 0;
         }
         return $this->sender();
+    }
+
+    public function setUpdatedKeys(): void
+    {
+        foreach ($this->subjectKeys as $url) {
+            if ($this->cache->offsetGet($url)['has_update'] === true) {
+                $this->updatedKeys[] = $url;
+            }
+        }
     }
 
     public function sendMail(string $email, string $url): bool
@@ -60,8 +66,8 @@ class Mailer extends BaseService
     protected function createMailingList(): void
     {
         foreach ($this->updatedKeys as $url) {
-            $this->setSubscribe($url);
-            foreach ($this->subscribe['subscribers'] as $email) {
+            $this->setSubject($url);
+            foreach ($this->subject->subscribers as $email) {
                 $this->send($email, $url);
             }
         }

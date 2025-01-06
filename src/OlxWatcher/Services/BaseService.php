@@ -2,12 +2,12 @@
 
 namespace Autodoctor\OlxWatcher\Services;
 
-use Autodoctor\OlxWatcher\Database\CacheFactory;
+use Autodoctor\OlxWatcher\Database\RepositoryFactory;
 use Autodoctor\OlxWatcher\Database\Cache;
-use Autodoctor\OlxWatcher\DTO\SubjectDto;
-use Autodoctor\OlxWatcher\DTO\SubjectFactory;
+use Autodoctor\OlxWatcher\Subjects\SubjectDto;
+use Autodoctor\OlxWatcher\Subjects\SubjectFactory;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
-use Autodoctor\OlxWatcher\ParserFactory;
+use Autodoctor\OlxWatcher\Parsers\ParserFactory;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 
@@ -31,12 +31,12 @@ class BaseService implements LoggerAwareInterface
      */
     public function setCache(): void
     {
-        $this->cache = CacheFactory::getCacheDriver();
+        $this->cache = RepositoryFactory::getCacheDriver();
     }
 
     public function setSubject(string $url): void
     {
-        $data = $this->cache->get($url);
+        $data = $this->cache->offsetGet($url);
         $this->subject = $data ? SubjectFactory::createFromArray($data) : false;
     }
 

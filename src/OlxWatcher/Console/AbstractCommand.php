@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Console;
 
@@ -18,8 +16,8 @@ abstract class AbstractCommand
             $closure = $this->commandClosure($serviceName, $logger);
 
             return $closure();
-        } catch (\Exception $e) {
-            $logger->error(static::ERROR, $logger->getExceptionLogContext($e));
+        } catch (\Throwable $e) {
+            $logger->error(static::ERROR, $logger->getExceptionContext($e));
 
             return static::ERROR . $e->getMessage();
         }

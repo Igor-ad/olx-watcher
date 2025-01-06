@@ -2,7 +2,7 @@
 
 namespace Autodoctor\OlxWatcher\Services;
 
-use Autodoctor\OlxWatcher\DTO\SubjectFactory;
+use Autodoctor\OlxWatcher\Subjects\SubjectFactory;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
 
 class SubscribeService extends BaseService
@@ -23,7 +23,7 @@ class SubscribeService extends BaseService
             $this->subject = SubjectFactory::createFromRequest($price, $email);
             $message = self::NEW_SUBSCRIBE;
         }
-        $this->cache->set($url, $this->subject->toArray());
+        $this->cache->offsetSet($url, $this->subject->toArray());
 
         return $message;
     }
@@ -59,6 +59,6 @@ class SubscribeService extends BaseService
             fn($mailBox) => $mailBox !== $email
         );
         $this->subject->subscribers = $updateSubscribers;
-        $this->cache->set($url, $this->subject->toArray());
+        $this->cache->offsetSet($url, $this->subject->toArray());
     }
 }

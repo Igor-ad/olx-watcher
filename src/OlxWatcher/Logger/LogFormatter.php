@@ -11,7 +11,7 @@ trait LogFormatter
         $pid = $this->pidToString(getmypid());
 
         return sprintf(
-            '%s | pid: %s | %s: %s %s %s',
+            '%s | pid: %s | %s: %s | %s %s',
             date('Y-m-d H:i:s'), $pid, $level,
             $message, $this->contextToString($context), PHP_EOL
         );
@@ -28,16 +28,18 @@ trait LogFormatter
             $pid < 100 => $pid . '   ',
             $pid < 1000 => $pid . '  ',
             $pid < 10000 => $pid . ' ',
-            default => $pid,
+            default => (string)$pid,
         };
     }
 
-    public function getExceptionLogContext(\Exception $error): array
+    public function getExceptionContext(\Throwable $exception): array
     {
         return [
-            $error->getMessage(),
-            $error->getCode(),
-            PHP_EOL . $error->getTraceAsString(),
+            'Message: ' . $exception->getMessage(),
+            'Code: ' . $exception->getCode(),
+            'File: ' . $exception->getFile(),
+            'Line: ' . $exception->getLine(),
+            'Trace: ' . $exception->getTraceAsString(),
         ];
     }
 }

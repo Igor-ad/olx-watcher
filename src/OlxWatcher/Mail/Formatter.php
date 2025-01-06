@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Mail;
 
@@ -22,8 +20,8 @@ trait Formatter
             '%s: %s %s %s New price: %s at %s %s Previous price: %s at %s.',
             $this->config['mail']['message'], self::RN,
             $url, self::RN,
-            $this->subscribe['last_price'], $this->subscribe['last_time'], self::RN,
-            $this->subscribe['previous_price'], $this->subscribe['previous_time']
+            $this->subject->lastPrice, $this->subject->lastTime, self::RN,
+            $this->subject->previousPrice, $this->subject->previousTime
         );
     }
 

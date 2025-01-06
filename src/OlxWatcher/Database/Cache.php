@@ -1,11 +1,11 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Database;
 
-interface CacheInterface
+interface Cache
 {
+    public function clear(): bool;
+
     public function get(string $key): mixed;
 
     public function mGet(array $keys): array;

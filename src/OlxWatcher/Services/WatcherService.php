@@ -2,9 +2,7 @@
 
 namespace Autodoctor\OlxWatcher\Services;
 
-use Autodoctor\OlxWatcher\Database\CacheFileService;
-use Autodoctor\OlxWatcher\Database\CacheRedisService;
-use Autodoctor\OlxWatcher\DTO\SubjectFactory;
+use Autodoctor\OlxWatcher\Subjects\SubjectFactory;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
 
 class WatcherService extends AbstractService
@@ -31,7 +29,6 @@ class WatcherService extends AbstractService
     public function watch(): int
     {
         $this->subscribeIterator();
-        $this->cache->mSet($this->subjectCollect);
 
         return 0;
     }
@@ -41,28 +38,19 @@ class WatcherService extends AbstractService
      */
     public function subscribeIterator(): void
     {
-        foreach ($this->subjectKeys as $key => $url) {
-            if ($this->cache instanceof CacheFileService) {
-                $this->subjectCollect[$url] = $this->comparator(
-                    $this->subjectCollect[$url], $url, $this->getPrice($url)
-                );
-            }
-
-            if ($this->cache instanceof CacheRedisService) {
-                $this->subjectCollect[$key] = $this->comparator(
-                    $this->subjectCollect[$key], $url, $this->getPrice($url)
-                );
-            }
+        foreach ($this->cache as $url => $value) {
+            $subjectHash = $this->comparator($value, $url, $this->getPrice($url));
+            $this->cache->offsetSet($url, $subjectHash);
         }
     }
 
-    protected function comparator(array $subject, string $url, string $price): array
+    protected function comparator(array $subjectHash, string $url, string $price): array
     {
-        if ($subject['last_price'] !== $price) {
+        if ($subjectHash['last_price'] !== $price) {
             $this->logger->notice(self::PRICE_CHANGED, [$price, $url]);
 
-            return SubjectFactory::updatePrice($subject, $price)->toArray();
+            return SubjectFactory::updatePrice($subjectHash, $price)->toArray();
         }
-        return SubjectFactory::changeUpdateFlag($subject)->toArray();
+        return SubjectFactory::changeUpdateFlag($subjectHash)->toArray();
     }
 }
