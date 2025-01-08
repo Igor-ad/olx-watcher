@@ -43,7 +43,8 @@ class Mailer extends AbstractService
     public function setUpdatedKeys(): void
     {
         foreach ($this->subjectKeys as $url) {
-            if ($this->cache->offsetGet($url)['has_update'] === true) {
+            $subject = $this->cache->offsetGet($url);
+            if ($subject->hasUpdate === true) {
                 $this->updatedKeys[] = $url;
             }
         }

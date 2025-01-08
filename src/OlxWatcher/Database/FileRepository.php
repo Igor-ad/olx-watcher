@@ -69,7 +69,12 @@ class FileRepository extends SubjectCollection implements Cache
     {
         $content = FileProcessor::getContent(FilesEnum::SUBSCRIBE_FILE);
 
-        return json_decode($content, true) ?? [];
+        if ($content === '') {
+            return [];
+        }
+        $this->unserialize($content);
+
+        return $this->getArrayCopy();
     }
 
     /**
@@ -77,7 +82,7 @@ class FileRepository extends SubjectCollection implements Cache
      */
     protected function saveData(): void
     {
-        $data = json_encode($this->getArrayCopy(), JSON_PRETTY_PRINT);
+        $data = $this->serialize();
         FileProcessor::putContent(FilesEnum::SUBSCRIBE_FILE, $data, LOCK_EX);
     }
 }

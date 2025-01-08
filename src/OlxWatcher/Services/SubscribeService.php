@@ -2,7 +2,7 @@
 
 namespace Autodoctor\OlxWatcher\Services;
 
-use Autodoctor\OlxWatcher\Subjects\SubjectFactory;
+use Autodoctor\OlxWatcher\Subjects\SubjectDto;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
 
 class SubscribeService extends BaseService
@@ -16,14 +16,15 @@ class SubscribeService extends BaseService
      */
     public function subscribe(string $url, string $email): string
     {
-        if ($this->subject) {
-            $message = $this->addNewSubscriber($url, $email);
-        } else {
+        if ($this->subject === false) {
             $price = $this->getPrice($url);
-            $this->subject = SubjectFactory::createFromRequest($price, $email);
+            $this->subject = SubjectDto::createFromRequest($price, $email);
+            $this->logger->notice(self::NEW_SUBSCRIBE, [$email, $url]);
             $message = self::NEW_SUBSCRIBE;
+        } else {
+            $message = $this->addNewSubscriber($url, $email);
         }
-        $this->cache->offsetSet($url, $this->subject->toArray());
+        $this->cache->offsetSet($url, $this->subject);
 
         return $message;
     }
@@ -35,7 +36,7 @@ class SubscribeService extends BaseService
 
             return self::SUBSCRIBE;
         } else {
-            $this->subject->subscribers[] = $email;
+            $this->subject = SubjectDto::addSubscribers($this->subject->toArray(), $email);
             $this->logger->notice(self::NEW_SUBSCRIBE, [$email, $url]);
 
             return self::NEW_SUBSCRIBE;
@@ -45,20 +46,17 @@ class SubscribeService extends BaseService
     public function unsubscribe(string $url, string $email): string
     {
         if ($this->subject) {
-            $this->unsubscribeFromMailingList($url, $email);
+            $this->unsubscribeFromMailingList($email);
+            $this->cache->offsetSet($url, $this->subject);
         }
         $this->logger->notice(self::UNSUBSCRIBE, [$email, $url]);
 
         return self::UNSUBSCRIBE;
     }
 
-    private function unsubscribeFromMailingList(string $url, string $email): void
+    private function unsubscribeFromMailingList(string $email): void
     {
-        $updateSubscribers = array_filter(
-            $this->subject->subscribers,
-            fn($mailBox) => $mailBox !== $email
-        );
-        $this->subject->subscribers = $updateSubscribers;
-        $this->cache->offsetSet($url, $this->subject->toArray());
+        $updateSubscribers = array_filter($this->subject->subscribers, fn($mailBox) => $mailBox !== $email);
+        $this->subject = SubjectDto::updateSubscribers($this->subject->toArray(), $updateSubscribers);
     }
 }

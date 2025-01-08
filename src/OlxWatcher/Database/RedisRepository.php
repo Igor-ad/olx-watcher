@@ -17,7 +17,7 @@ class RedisRepository extends SubjectCollection implements Cache
     )
     {
         $this->redis->connect(Configurator::config()['redis']['host']);
-        $this->redis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_JSON);
+        $this->redis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_PHP);
         parent::__construct();
     }
 
@@ -62,7 +62,7 @@ class RedisRepository extends SubjectCollection implements Cache
      */
     public function set(string $key, mixed $value): bool
     {
-        return $this->redis->set($key, $value, ['nx', 'ex' => Configurator::expiration()]);
+        return $this->redis->set($key, $value, Configurator::expiration());
     }
 
     /**
@@ -83,6 +83,9 @@ class RedisRepository extends SubjectCollection implements Cache
         return array_combine($keys, $this->mGet($keys));
     }
 
+    /**
+     * @throws RedisException|WatcherException
+     */
     protected function saveData(): void
     {
         foreach ($this->getIterator() as $url => $subject) {

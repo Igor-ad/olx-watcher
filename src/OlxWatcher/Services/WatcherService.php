@@ -2,7 +2,7 @@
 
 namespace Autodoctor\OlxWatcher\Services;
 
-use Autodoctor\OlxWatcher\Subjects\SubjectFactory;
+use Autodoctor\OlxWatcher\Subjects\SubjectDto;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
 
 class WatcherService extends AbstractService
@@ -38,19 +38,19 @@ class WatcherService extends AbstractService
      */
     public function subscribeIterator(): void
     {
-        foreach ($this->cache as $url => $value) {
-            $subjectHash = $this->comparator($value, $url, $this->getPrice($url));
-            $this->cache->offsetSet($url, $subjectHash);
+        foreach ($this->cache as $url => $subject) {
+            $updatedSubject = $this->comparator($subject, $url, $this->getPrice($url));
+            $this->cache->offsetSet($url, $updatedSubject);
         }
     }
 
-    protected function comparator(array $subjectHash, string $url, string $price): array
+    protected function comparator(SubjectDto $subject, string $url, string $price): SubjectDto
     {
-        if ($subjectHash['last_price'] !== $price) {
+        if ($subject->lastPrice !== $price) {
             $this->logger->notice(self::PRICE_CHANGED, [$price, $url]);
 
-            return SubjectFactory::updatePrice($subjectHash, $price)->toArray();
+            return SubjectDto::updatePrice($subject->toArray(), $price);
         }
-        return SubjectFactory::changeUpdateFlag($subjectHash)->toArray();
+        return SubjectDto::changeUpdateFlag($subject->toArray());
     }
 }

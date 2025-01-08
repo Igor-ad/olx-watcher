@@ -15,7 +15,7 @@ abstract class SubjectCollection extends \ArrayObject
         $this->saveData();
     }
 
-    abstract protected function loadData(): mixed;
+    abstract protected function loadData(): array;
 
     abstract protected function saveData(): void;
 }
