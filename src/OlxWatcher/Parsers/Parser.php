@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Parsers;
 
@@ -64,18 +66,21 @@ class Parser
         $temp = stristr($input, $end, true);
 
         return str_replace(
-            $start, '',
+            $start,
+            '',
             strstr($temp, $start),
         );
     }
 
     private function parsePrice(): string
     {
-        $tempPrice = trim($this->cutter(
-            input: $this->title,
-            start: self::CURRENCY_START,
-            end: self::CURRENCY_STRING,
-        ));
+        $tempPrice = trim(
+            $this->cutter(
+                input: $this->title,
+                start: self::CURRENCY_START,
+                end: self::CURRENCY_STRING,
+            )
+        );
         return str_replace(' ', '', $tempPrice);
     }
 

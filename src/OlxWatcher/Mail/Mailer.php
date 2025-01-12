@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Mail;
 
@@ -11,8 +13,8 @@ class Mailer extends AbstractService
 {
     use Formatter;
 
-    const EMPTY_LIST = 'There is no mailing list.';
-    const MAIL_SENT = 'The email may have been sent.';
+    public const EMPTY_LIST = 'There is no mailing list.';
+    public const MAIL_SENT = 'The email may have been sent.';
 
     protected array $config = [];
     protected bool $wasSent = true;
@@ -84,9 +86,12 @@ class Mailer extends AbstractService
         }
         $this->wasSent = false;
 
-        throw new MailerException(sprintf(
-            'The email is not sent to the recipient: %s', $email
-        ));
+        throw new MailerException(
+            sprintf(
+                'The email is not sent to the recipient: %s',
+                $email
+            )
+        );
     }
 
     /**

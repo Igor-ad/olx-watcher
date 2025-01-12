@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Controllers;
 
@@ -77,12 +79,14 @@ class SubscribeController
 
     public function errorResponse(string $errorMessage): string
     {
-        return json_encode([
-            'data' => [
-                'success' => false,
-                'message' => $errorMessage,
+        return json_encode(
+            [
+                'data' => [
+                    'success' => false,
+                    'message' => $errorMessage,
+                ]
             ]
-        ]);
+        );
     }
 
     public function responseToArray(string $message): array

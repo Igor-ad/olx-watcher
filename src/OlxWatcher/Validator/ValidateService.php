@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Validator;
 
@@ -11,7 +13,7 @@ class ValidateService
      */
     public static function validated(array $rules): array
     {
-        return (new static)->validate($rules);
+        return (new self())->validate($rules);
     }
 
     /**
@@ -23,8 +25,10 @@ class ValidateService
         $errors = $this->validationErrors($data);
 
         if ($data === false || $errors) {
-            throw new ValidateException(sprintf(
-                    'Invalid entered data: "%s"', $this->toString($errors)
+            throw new ValidateException(
+                sprintf(
+                    'Invalid entered data: "%s"',
+                    $this->toString($errors)
                 )
             );
         }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher;
 
@@ -21,9 +23,13 @@ trait CurlTrait
         if (!$errNo && ($getInfo['http_code'] >= 200 && $getInfo['http_code'] < 300)) {
             return $output;
         }
-        throw new WatcherException(sprintf(
-            'Target URL not available, error: %d , URL: %s', $errNo, $targetUrl
-        ));
+        throw new WatcherException(
+            sprintf(
+                'Target URL not available, error: %d , URL: %s',
+                $errNo,
+                $targetUrl
+            )
+        );
     }
 
     protected function curlSetup(string $targetUrl): array

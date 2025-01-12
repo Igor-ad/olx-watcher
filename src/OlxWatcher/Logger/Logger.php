@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Logger;
 
@@ -26,7 +28,10 @@ class Logger extends AbstractLogger
             throw new InvalidArgumentException('This logging level is not available.');
         }
         FileProcessor::putContent(
-            $this->logFile, $this->toString($level, $message, $context), FILE_APPEND);
+            $this->logFile,
+            $this->toString($level, $message, $context),
+            FILE_APPEND
+        );
     }
 
     private function isValidLevel(string $level): bool

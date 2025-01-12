@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Database;
 
@@ -36,7 +38,7 @@ class FileRepository extends SubjectCollection implements Cache
     public function keys(string $keyPattern = ''): array
     {
         return array_filter(
-            array_keys($this->getArrayCopy()),
+            array_keys($this->all()),
             fn($key) => str_starts_with($key, $keyPattern)
         );
     }
@@ -74,7 +76,7 @@ class FileRepository extends SubjectCollection implements Cache
         }
         $this->unserialize($content);
 
-        return $this->getArrayCopy();
+        return $this->all();
     }
 
     /**

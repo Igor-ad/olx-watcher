@@ -1,10 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Enums;
 
 enum FilesEnum: string
 {
-    const CONFIG_FILE = __DIR__ . '/../../config.ini';
-    const LOG_FILE = __DIR__ . '/../../olx_watcher.log';
-    const SUBSCRIBE_FILE = __DIR__ . '/../../subscribe.db';
+    public const CONFIG_FILE = __DIR__ . '/../../config.ini';
+    public const LOG_FILE = __DIR__ . '/../../olx_watcher.log';
+    public const SUBSCRIBE_FILE = __DIR__ . '/../../subscribe.db';
 }

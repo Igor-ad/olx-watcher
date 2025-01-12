@@ -12,8 +12,12 @@ trait LogFormatter
 
         return sprintf(
             '%s | pid: %s | %s: %s | %s %s',
-            date('Y-m-d H:i:s'), $pid, $level,
-            $message, $this->contextToString($context), PHP_EOL
+            date('Y-m-d H:i:s'),
+            $pid,
+            $level,
+            $message,
+            $this->contextToString($context),
+            PHP_EOL
         );
     }
 

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Services;
 
@@ -7,9 +9,9 @@ use Autodoctor\OlxWatcher\Exceptions\WatcherException;
 
 class SubscribeService extends BaseService
 {
-    const NEW_SUBSCRIBE = 'Subscription to the resource has been completed.';
-    const SUBSCRIBE = 'A subscription to this resource has already been completed.';
-    const UNSUBSCRIBE = 'Unsubscribe from the resource is complete.';
+    public const NEW_SUBSCRIBE = 'Subscription to the resource has been completed.';
+    public const SUBSCRIBE = 'A subscription to this resource has already been completed.';
+    public const UNSUBSCRIBE = 'Unsubscribe from the resource is complete.';
 
     /**
      * @throws WatcherException

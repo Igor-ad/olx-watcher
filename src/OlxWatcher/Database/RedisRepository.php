@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Database;
 
@@ -14,8 +16,7 @@ class RedisRepository extends SubjectCollection implements Cache
      */
     public function __construct(
         protected Redis $redis,
-    )
-    {
+    ) {
         $this->redis->connect(Configurator::config()['redis']['host']);
         $this->redis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_PHP);
         parent::__construct();

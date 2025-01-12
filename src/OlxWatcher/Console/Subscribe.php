@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Console;
 
@@ -8,7 +10,7 @@ use Autodoctor\OlxWatcher\Services\SubscribeService;
 
 class Subscribe extends AbstractCommand
 {
-    const ERROR = 'Subscribe error. ';
+    public const ERROR = 'Subscribe error. ';
 
     public function __invoke(): int|string
     {

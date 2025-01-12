@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Mail;
 
@@ -18,10 +20,15 @@ trait Formatter
     {
         return sprintf(
             '%s: %s %s %s New price: %s at %s %s Previous price: %s at %s.',
-            $this->config['mail']['message'], self::RN,
-            $url, self::RN,
-            $this->subject->lastPrice, $this->subject->lastTime, self::RN,
-            $this->subject->previousPrice, $this->subject->previousTime
+            $this->config['mail']['message'],
+            self::RN,
+            $url,
+            self::RN,
+            $this->subject->lastPrice,
+            $this->subject->lastTime,
+            self::RN,
+            $this->subject->previousPrice,
+            $this->subject->previousTime
         );
     }
 
@@ -29,7 +36,9 @@ trait Formatter
     {
         return sprintf(
             '%s?status=unsubscribe&email=%s&url=%s',
-            $this->config['metadata']['app_url'], $email, $url
+            $this->config['metadata']['app_url'],
+            $email,
+            $url
         );
     }
 }

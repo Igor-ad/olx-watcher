@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Services;
 
@@ -7,8 +9,8 @@ use Autodoctor\OlxWatcher\Exceptions\WatcherException;
 
 class WatcherService extends AbstractService
 {
-    const EMPTY_LIST = 'No subscriptions yet.';
-    const PRICE_CHANGED = 'The price has changed.';
+    public const EMPTY_LIST = 'No subscriptions yet.';
+    public const PRICE_CHANGED = 'The price has changed.';
 
     /**
      * @throws WatcherException
