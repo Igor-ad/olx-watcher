@@ -87,4 +87,15 @@ class FileRepository extends SubjectCollection implements Cache
         $data = $this->serialize();
         FileProcessor::putContent(FilesEnum::SUBSCRIBE_FILE, $data, LOCK_EX);
     }
+
+    /**
+     * @throws \Exception
+     */
+    public function isExpired(string $lastTime, int $expirationInterval): bool
+    {
+        $nowTimestamp = (new \DateTime('now'))->getTimestamp();
+        $lastTimestamp = (new \DateTime($lastTime))->getTimestamp();
+
+        return $nowTimestamp - $expirationInterval > $lastTimestamp;
+    }
 }
