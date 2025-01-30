@@ -6,13 +6,15 @@ namespace Autodoctor\OlxWatcher\Services;
 
 use Autodoctor\OlxWatcher\Configurator;
 use Autodoctor\OlxWatcher\Database\FileRepository;
-use Autodoctor\OlxWatcher\Subjects\SubjectDto;
 use Autodoctor\OlxWatcher\Exceptions\WatcherException;
+use Autodoctor\OlxWatcher\Notifiers\NotifierFactory;
+use Autodoctor\OlxWatcher\Subjects\AdsDTO;
 
 class WatcherService extends AbstractService
 {
     public const EMPTY_LIST = 'No subscriptions yet.';
     public const PRICE_CHANGED = 'The price has changed.';
+    public const NOTIFY = 'Subscribers have just been notified.';
 
     /**
      * @throws WatcherException
@@ -24,22 +26,13 @@ class WatcherService extends AbstractService
 
             return 0;
         }
-        return $this->watch();
-    }
-
-    /**
-     * @throws WatcherException
-     */
-    public function watch(): int
-    {
         $this->subscribeIterator();
 
         return 0;
     }
 
     /**
-     * @throws WatcherException
-     * @throws \Exception
+     * @throws WatcherException|\Exception
      */
     public function subscribeIterator(): void
     {
@@ -56,13 +49,29 @@ class WatcherService extends AbstractService
         }
     }
 
-    protected function comparator(SubjectDto $subject, string $url, string $price): SubjectDto
+    /**
+     * @throws WatcherException
+     */
+    protected function comparator(AdsDTO $adsDTO, string $url, string $price): AdsDTO
     {
-        if ($subject->lastPrice !== $price) {
+        if ($adsDTO->lastPrice !== $price) {
             $this->logger->notice(self::PRICE_CHANGED, [$price, $url]);
+            $updatedAdsDTO = AdsDTO::updatePrice($adsDTO->toArray(), $price);
+            $this->notify($updatedAdsDTO);
+            $this->logger->notice(self::NOTIFY);
 
-            return SubjectDto::updatePrice($subject->toArray(), $price);
+            return $updatedAdsDTO;
         }
-        return SubjectDto::changeUpdateFlag($subject->toArray());
+        return AdsDTO::changeUpdateFlag($adsDTO->toArray());
+    }
+
+    /**
+     * @throws WatcherException
+     */
+    private function notify(AdsDTO $adsDTO): void
+    {
+        $this->subject->setDTO($adsDTO);
+        $this->subject->attach(NotifierFactory::getNotifier());
+        $this->subject->notify();
     }
 }

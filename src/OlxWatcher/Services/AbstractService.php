@@ -7,7 +7,6 @@ namespace Autodoctor\OlxWatcher\Services;
 abstract class AbstractService extends BaseService
 {
     protected array $subjectKeys;
-    protected array $updatedKeys = [];
 
     public function __construct()
     {

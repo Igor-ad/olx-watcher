@@ -125,8 +125,7 @@ if [ -f /var/www/html/conf/worker/supervisor.conf ]; then
     cp /var/www/html/conf/worker/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 fi
 chmod 0755 /var/www/html/src/OlxWatcher/Console/WatcherCommand.php
-chmod 0755 /var/www/html/src/OlxWatcher/Console/MailerCommand.php
-chmod 0777 /var/www/html/src/subscribe.json
+chmod 0777 /var/www/html/src/subscribe.db
 chmod 0777 /var/www/html/src/olx_watcher.log
 cron
 ## Start Supervisord

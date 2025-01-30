@@ -4,7 +4,7 @@ Tracking OLX product prices and price changes
 
 ![License MIT](https://img.shields.io/badge/License-MIT-blue)
 [![Supported PHP Versions](https://img.shields.io/badge/PHP-8.2,%208.3,%208.4-blue)](https://github.com/Igor-ad/olx-watcher/)
-![GitHub release](https://img.shields.io/badge/Release-1.0.0-green)
+![GitHub release](https://img.shields.io/badge/Release-1.1.0-green)
 
 ### Requirements:
 
@@ -39,7 +39,7 @@ or Redis cache & SubjectCollection: OlxWatcher\Database\RedisRepository.
 
 Sample subscription storage file: src\subscribe_example.db
 
-The mailing uses sendmail: OlxWatcher\Mail\Mailer.
+The mailing uses sendmail: OlxWatcher\Notifiers\MailNotifier.
 
 All operations are logged to the file:  src/olx_watcher.log.
 

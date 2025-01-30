@@ -25,3 +25,7 @@ password = null
 subject = "The price of your tracked product has changed."
 message = "Please, visit to web page"
 sender = "admin@olx-watcher.com"
+
+[notifier]
+type = "mail"
+;type = "telegram"

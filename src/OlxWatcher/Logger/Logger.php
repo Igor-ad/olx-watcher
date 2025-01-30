@@ -17,10 +17,11 @@ class Logger extends AbstractLogger
 
     public function __construct(
         protected string $logFile = FilesEnum::LOG_FILE,
-    ) {}
+    ) {
+    }
 
     /**
-     * @throws WatcherException|InvalidArgumentException
+     * @throws WatcherException
      */
     public function log($level, string|\Stringable $message, array $context = []): void
     {

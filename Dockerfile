@@ -27,12 +27,6 @@ RUN docker-php-ext-install  zip mbstring exif pcntl bcmath -j$(nproc) gd intl
 # Install Redis and enable it
 RUN pecl install redis  && docker-php-ext-enable redis
 
-# Install the PHP pdo_mysql extention
-RUN docker-php-ext-install pdo_mysql
-
-# Install the PHP pdo_pgsql extention
-RUN docker-php-ext-install pdo_pgsql
-
 # Install PHP Opcache extention
 RUN docker-php-ext-install opcache
 
@@ -87,12 +81,12 @@ RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/www && \
   chown -R ${USER_NAME}:${GROUP_NAME} /etc/supervisor/conf.d/ && \
   chown -R ${USER_NAME}:${GROUP_NAME} $PHP_INI_DIR/conf.d/ && \
   touch /var/run/nginx.pid && \
-  chown -R $USER_NAME:$USER_NAME /var/cache/nginx && \
-  chown -R $USER_NAME:$USER_NAME /var/lib/nginx/ && \
-  chown -R $USER_NAME:$USER_NAME /var/run/nginx.pid && \
-  chown -R $USER_NAME:$USER_NAME /var/log/supervisor && \
-  chown -R $USER_NAME:$USER_NAME /etc/nginx/nginx.conf && \
-  chown -R $USER_NAME:$USER_NAME /etc/nginx/conf.d/ && \
+  chown -R ${USER_NAME}:${GROUP_NAME} /var/cache/nginx && \
+  chown -R ${USER_NAME}:${GROUP_NAME} /var/lib/nginx/ && \
+  chown -R ${USER_NAME}:${GROUP_NAME} /var/run/nginx.pid && \
+  chown -R ${USER_NAME}:${GROUP_NAME} /var/log/supervisor && \
+  chown -R ${USER_NAME}:${GROUP_NAME} /etc/nginx/nginx.conf && \
+  chown -R ${USER_NAME}:${GROUP_NAME} /etc/nginx/conf.d/ && \
   chown -R ${USER_NAME}:${GROUP_NAME} /tmp
 
 EXPOSE 8080
