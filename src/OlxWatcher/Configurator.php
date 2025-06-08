@@ -16,7 +16,7 @@ class Configurator
      */
     public static function config(): array
     {
-        $config = parse_ini_file(FilesEnum::CONFIG_FILE, true);
+        $config = parse_ini_file(FilesEnum::ConfigFile->getPath(), true);
 
         if ($config === false) {
             throw new WatcherException('Error reading configuration.');

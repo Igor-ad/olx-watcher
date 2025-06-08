@@ -6,7 +6,14 @@ namespace Autodoctor\OlxWatcher\Enums;
 
 enum FilesEnum: string
 {
-    public const CONFIG_FILE = __DIR__ . '/../../config.ini';
-    public const LOG_FILE = __DIR__ . '/../../olx_watcher.log';
-    public const SUBSCRIBE_FILE = __DIR__ . '/../../subscribe.db';
+    case ConfigFile = '/config.ini';
+    case LogFile = '/olx_watcher.log';
+    case SubscribeFile = '/subscribe.db';
+
+    public function getPath(): string
+    {
+        $basePath = dirname(__DIR__, 2);
+
+        return $basePath . DIRECTORY_SEPARATOR . ltrim($this->value, '/');
+    }
 }

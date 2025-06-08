@@ -26,7 +26,7 @@ class WatcherService extends AbstractService
 
             return 0;
         }
-        $this->subscribeIterator();
+        $this->iterate();
 
         return 0;
     }
@@ -34,7 +34,7 @@ class WatcherService extends AbstractService
     /**
      * @throws WatcherException|\Exception
      */
-    public function subscribeIterator(): void
+    protected function iterate(): void
     {
         foreach ($this->cache as $url => $subject) {
             if (is_a($this->cache, FileRepository::class)) {
@@ -44,7 +44,7 @@ class WatcherService extends AbstractService
                     continue;
                 }
             }
-            $updatedSubject = $this->comparator($subject, $url, $this->getPrice($url));
+            $updatedSubject = $this->comparison($subject, $url, $this->getPrice($url));
             $this->cache->offsetSet($url, $updatedSubject);
         }
     }
@@ -52,7 +52,7 @@ class WatcherService extends AbstractService
     /**
      * @throws WatcherException
      */
-    protected function comparator(AdsDTO $adsDTO, string $url, string $price): AdsDTO
+    protected function comparison(AdsDTO $adsDTO, string $url, string $price): AdsDTO
     {
         if ($adsDTO->lastPrice !== $price) {
             $this->logger->notice(self::PRICE_CHANGED, [$price, $url]);

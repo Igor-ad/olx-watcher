@@ -13,7 +13,7 @@ use Autodoctor\OlxWatcher\Parsers\ParserFactory;
 use Psr\Log\LoggerAwareTrait;
 use RedisException;
 
-class BaseService
+abstract class BaseService
 {
     use LoggerAwareTrait;
 

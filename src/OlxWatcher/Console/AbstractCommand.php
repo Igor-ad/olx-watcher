@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Autodoctor\OlxWatcher\Console;
 
+use Autodoctor\OlxWatcher\Enums\FilesEnum;
 use Autodoctor\OlxWatcher\Logger\Logger;
 
 abstract class AbstractCommand
@@ -12,7 +13,7 @@ abstract class AbstractCommand
 
     public function handler(string $serviceName): int|string
     {
-        $logger = new Logger();
+        $logger = new Logger(FilesEnum::LogFile->getPath());
 
         try {
             $closure = $this->commandClosure($serviceName, $logger);

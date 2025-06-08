@@ -15,7 +15,8 @@ class SubscribeController
 
     public function __construct(
         protected SubscribeService $service,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws WatcherException
@@ -23,7 +24,7 @@ class SubscribeController
     public function __invoke(): string
     {
         $this->validData = $this->getValidData();
-        $this->service->setSubject($this->validData['url']);
+        $this->service->setDTO($this->validData['url']);
 
         if ($this->validData['status'] === true) {
             $message = $this->unsubscribe();
